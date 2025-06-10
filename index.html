@@ -1134,9 +1134,10 @@
             </div>
             <ul class="nav-menu">
                 <li class="nav-item" onclick="showSection(event, 'calculator')">Calculator</li>
-                <li class="nav-item" onclick="window.open('./compliance-mtrix.html', '_self')">Compliance Matrix</li>
+                <li class="nav-item" onclick="window.open('./compliance-matrix.html', '_self')">Compliance Matrix</li>
                 <li class="nav-item" onclick="showSection(event, 'countries')">Country Database</li>
                 <li class="nav-item" onclick="window.open('./Cross-Border-Hiring-Assessment.html', '_blank')">Cross-Border Assessment</li>
+                <li class="nav-item" onclick="window.open('./compliance-bot.html', '_self')">AI Chatbot</li>
             </ul>
         </div>
     </nav>
@@ -1422,34 +1423,76 @@
 
         // --- COMPLIANCE ANALYSIS (CALCULATOR) & GEMINI API INTEGRATION ---
         let currentAnalysisContext = {}; // Store context for AI explanation
+        
+        // Helper function to extract structured compliance rules
+        function getComplianceRules(provider, client, service, complianceData) {
+            // Get relevant country data
+            const providerData = complianceData.countries[provider];
+            const clientData = complianceData.countries[client];
+            if (!providerData || !clientData) return { generalRuleNote: 'Unknown', providerOutboundRule: 'Unknown', clientInboundRule: 'Unknown' };
+            
+            // Determine color codes
+            const serviceKey = service.toLowerCase();
+            let providerColorCode = determineZone(providerData.colorCode, serviceKey);
+            let clientColorCode = determineZone(clientData.colorCode, serviceKey);            
+            
+            // Find the general rule based on color codes
+            const generalRule = complianceData.rules.find(rule => 
+                rule.clientColorCode.toLowerCase() === clientColorCode.toLowerCase() && 
+                rule.providerColorCode.toLowerCase() === providerColorCode.toLowerCase());
+                
+            const generalRuleNote = generalRule ? generalRule.notes : 'No specific rule found for this color combination';
+            
+            // Get outbound/inbound rules from respective countries
+            const providerOutboundRule = providerData.crossBorder?.outbound || 'No specific outbound rule found';
+            const clientInboundRule = clientData.crossBorder?.inbound || 'No specific inbound rule found';
+            
+            return {
+                generalRuleNote,
+                providerOutboundRule,
+                clientInboundRule
+            };
+        }
 
         async function getAIComplianceSummary() {
             const aiSummaryDisplay = document.getElementById('aiSummaryDisplay');
-            if (!aiSummaryDisplay || !currentAnalysisContext.provider || !currentAnalysisContext.requirementsText) {
+            if (!aiSummaryDisplay || !currentAnalysisContext.provider) {
                 showNotification('Please perform an analysis first.', 'warning');
                 return;
             }
 
             aiSummaryDisplay.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center;">✨ Generating AI explanation...</p>';
             
-            const { provider, client, service, requirementsText, status } = currentAnalysisContext;
+            const { provider, client, service, status } = currentAnalysisContext;
+            
+            // Get structured compliance rules
+            const rules = getComplianceRules(provider, client, service, complianceData);
 
             // MODIFIED PROMPT to ground the AI in provided data
             const prompt = `
-                Based *only* on the "Regulatory Requirements/Notes" provided below, generate a concise and easy-to-understand explanation for the following cross-border clinical compliance scenario. Do not introduce any information not present in these notes.
+You are a helpful compliance assistant. Your task is to synthesize the provided regulatory details into a clear, actionable summary for a clinician.
 
-                Scenario Details:
-                - Provider Location: ${provider}
-                - Client Location: ${client}
-                - Service Type: ${service.replace(/-/g, ' ')}
-                - Determined Compliance Status: ${status}
-                - Regulatory Requirements/Notes: "${requirementsText}"
+Based *only* on the structured information below, generate a concise explanation for the following cross-border compliance scenario. Do not introduce any information not present in these notes.
 
-                Your explanation should:
-                1. Summarize the key takeaways from the provided "Regulatory Requirements/Notes".
-                2. If the "Determined Compliance Status" is "Conditional" and the notes mention potential conditions, briefly outline what those conditions might be or what a user should investigate further, based *only* on the provided notes.
-                3. Be clear and actionable for a clinician or compliance officer.
-                4. Avoid verbatim repetition of the input; focus on interpretation and actionable next steps derived *solely* from the provided "Regulatory Requirements/Notes".
+**Scenario Details:**
+- **Provider Location:** ${provider}
+- **Client Location:** ${client}
+- **Service Type:** ${service.replace(/-/g, ' ')}
+- **Determined Compliance Status:** ${status}
+
+**Structured Regulatory Information:**
+- **1. General Rule (Based on a color-coded system):** "${rules.generalRuleNote}"
+- **2. Provider's Outbound Regulations (Rules for services *leaving* ${provider}):** "${rules.providerOutboundRule}"
+- **3. Client's Inbound Regulations (Rules for services *entering* ${client}):** "${rules.clientInboundRule}"
+
+**Your Explanation Must:**
+1.  Start with a clear, one-sentence summary of the overall situation based on the "Determined Compliance Status".
+2.  Explain the 'why' behind the status by synthesizing the three sources of information. Explain how the general rule, the provider's outbound rules, and the client's inbound rules work together.
+3.  If the status is "Conditional," clearly list the specific conditions or actions required, specifying whether they apply to the provider (outbound) or the client's jurisdiction (inbound).
+4.  Conclude with a clear, actionable next step for the user.
+5.  Do not repeat the input rules verbatim. Focus on clear interpretation.
+
+Generate the explanation now.
             `;
 
             try {

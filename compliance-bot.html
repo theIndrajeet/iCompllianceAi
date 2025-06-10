@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iCompliance | AI Compliance Chatbot</title>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Showdown for rendering Markdown in the chat -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    
+    <!-- Link to the external complianceData.js file -->
+    <script src="complianceData.js"></script>
+    <style>
+        /* CSS from your index.html for consistent styling */
+        :root {
+            --primary: #2d9cdb;
+            --primary-dark: #4f46e5;
+            --secondary: #f2f2f2;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f0f10;
+            --darker: #050506;
+            --card: #18181b;
+            --border: #27272a;
+            --text: #fafafa;
+            --text-muted: #a1a1aa;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Background from index.html */
+        .universe-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: radial-gradient(ellipse at bottom, #1b1b2f 0%, #050506 100%);
+            overflow: hidden;
+        }
+        
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+        .orb-1 { width: 600px; height: 600px; background: var(--gradient-1); top: -300px; left: -300px; }
+        .orb-2 { width: 400px; height: 400px; background: var(--gradient-2); bottom: -200px; right: -200px; animation-delay: -10s; }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(100px, 100px) scale(0.9); }
+        }
+
+        /* Navigation from index.html */
+        nav {
+            position: sticky; top: 0; width: 100%;
+            background: rgba(5, 5, 6, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000; padding: 1rem 0;
+        }
+        .nav-container {
+            max-width: 1400px; margin: 0 auto; padding: 0 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo { display: flex; align-items: center; gap: 1rem; font-size: 1.5rem; font-weight: 700; color: var(--text); text-decoration: none; }
+        .logo-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+        .logo-icon .logo-circle { width: 20px; height: 20px; background: var(--gradient-1); border-radius: 50%; }
+        .logo-icon .logo-bar { width: 10px; height: 20px; background: var(--gradient-1); margin-left: 10px; }
+        .nav-menu { display: flex; gap: 1rem; list-style: none; }
+        .nav-item a { position: relative; padding: 0.5rem 1.5rem; cursor: pointer; border-radius: 10px; transition: all 0.3s ease; font-weight: 500; color: var(--text-muted); text-decoration: none; }
+        .nav-item a:hover { color: var(--text); background: rgba(99, 102, 241, 0.1); }
+        .nav-item a.active { color: var(--text); background: rgba(99, 102, 241, 0.2); }
+        .nav-item a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        /* Main Content Area */
+        main {
+            min-height: calc(100vh - 80px);
+            position: relative; z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 3rem;
+        }
+        .container {
+            max-width: 900px; 
+            width: 100%;
+            padding: 0 2rem;
+        }
+        .hero { text-align: center; margin-bottom: 2rem; }
+        .hero h1 { font-size: 2.5rem; font-weight: 800; color: var(--text); }
+        .hero p { color: var(--text-muted); max-width: 600px; margin: 0.5rem auto 0; font-size: 1.1rem; }
+
+
+        /* Chatbot Specific Styles */
+        .chat-container {
+            background: rgba(24, 24, 27, 0.7);
+            backdrop-filter: blur(24px) saturate(120%);
+            border: 1.5px solid var(--border);
+            border-radius: 24px;
+            padding: 1.7rem;
+            box-shadow: 0 12px 48px 0 rgba(45,156,219,0.13), 0 1.5px 8px 0 rgba(99,102,241,0.10);
+            transition: box-shadow 0.3s cubic-bezier(.4,2,.6,1), border-color 0.3s;
+            display: flex;
+            flex-direction: column;
+            height: 70vh; 
+        }
+        .chat-container:focus-within, .chat-container:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(45,156,219,0.10), 0 12px 48px 0 rgba(45,156,219,0.13);
+        }
+        #chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 0 1rem; 
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        #chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+        #chat-messages::-webkit-scrollbar-track { background: var(--dark); }
+        #chat-messages::-webkit-scrollbar-thumb {
+            background: var(--primary-dark);
+            border-radius: 4px;
+        }
+        #chat-messages::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        .chat-message {
+            padding: 1.2rem 1.8rem;
+            border-radius: 20px;
+            max-width: 85%;
+            line-height: 1.7;
+            animation: fadeIn 0.4s cubic-bezier(.4,2,.6,1);
+            word-wrap: break-word;
+            box-shadow: 0 2px 16px 0 rgba(45,156,219,0.10);
+            position: relative;
+            font-size: 1.08rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #2d9cdb 0%, #3b82f6 100%);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 8px;
+            box-shadow: 0 4px 24px 0 rgba(45,156,219,0.18);
+        }
+        .bot-message {
+            background: linear-gradient(135deg, #23234a 60%, #18181b 100%);
+            border: 1.5px solid var(--border);
+            align-self: flex-start;
+            border-bottom-left-radius: 8px;
+            box-shadow: 0 4px 24px 0 rgba(99,102,241,0.13);
+        }
+        .bot-message.thinking {
+            display: flex; align-items: center; gap: 0.75rem; color: var(--text-muted);
+        }
+        .bot-message p:last-child { margin-bottom: 0; }
+        .bot-message h3 { color: var(--primary); margin-bottom: 0.75rem; font-size: 1.1rem; }
+        .bot-message ul { padding-left: 1.5rem; margin-top: 0.5rem;}
+        .bot-message li { margin-bottom: 0.5rem; }
+
+        #chat-input-form {
+            display: flex;
+            gap: 1rem;
+            border-top: 1.5px solid var(--border);
+            padding-top: 1.7rem;
+            margin-top: auto;
+        }
+        #chat-input {
+            flex-grow: 1;
+            padding: 1.2rem 1.7rem;
+            background: rgba(10,10,12,0.98);
+            border: 2.5px solid var(--border);
+            border-radius: 16px;
+            color: var(--text);
+            font-size: 1.12rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 12px 0 rgba(45,156,219,0.10);
+        }
+        #chat-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 5px rgba(45, 156, 219, 0.13), 0 0 30px -5px rgba(45, 156, 219, 0.10);
+            background: rgba(20,20,30,0.98);
+        }
+        #send-button {
+            padding: 1.2rem 1.7rem;
+            border: none;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: box-shadow 0.3s, background 0.3s, transform 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 16px 0 rgba(102,126,234,0.18);
+            position: relative;
+            overflow: hidden;
+        }
+        #send-button:hover {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 6px 32px 0 rgba(240,147,251,0.18);
+            transform: scale(1.06);
+        }
+        #send-button:active {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        .dot-flashing {
+            position: relative;
+            width: 10px; height: 10px;
+            border-radius: 5px; background-color: var(--primary);
+            color: var(--primary); animation: dot-flashing 1s infinite linear alternate;
+            animation-delay: .5s;
+        }
+        .dot-flashing::before, .dot-flashing::after {
+            content: ''; display: inline-block; position: absolute; top: 0;
+        }
+        .dot-flashing::before {
+            left: -15px; width: 10px; height: 10px; border-radius: 5px;
+            background-color: var(--primary); color: var(--primary);
+            animation: dot-flashing 1s infinite alternate; animation-delay: 0s;
+        }
+        .dot-flashing::after {
+            left: 15px; width: 10px; height: 10px; border-radius: 5px;
+            background-color: var(--primary); color: var(--primary);
+            animation: dot-flashing 1s infinite alternate; animation-delay: 1s;
+        }
+        @keyframes dot-flashing {
+            0% { background-color: var(--primary); }
+            50%, 100% { background-color: rgba(45, 156, 219, 0.2); }
+        }
+
+        .compliance-zone {
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-left: 6px;
+            text-transform: uppercase;
+            font-size: 0.8em;
+            letter-spacing: 0.5px;
+        }
+        .compliance-zone.RED { color: #ef4444; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); }
+        .compliance-zone.GREEN { color: #10b981; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); }
+        .compliance-zone.BLUE { color: #3b82f6; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); }
+        .compliance-zone.PENDING { color: #f59e0b; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); }
+
+        #suggested-prompts-container {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .prompt-suggestion {
+            background: rgba(30,41,59,0.8);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .prompt-suggestion:hover {
+            background: var(--primary-dark);
+            color: #fff;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .container { padding: 1rem; }
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1rem; }
+            .chat-container { height: 80vh; padding: 1rem;}
+        }
+    </style>
+</head>
+<body>
+    <!-- Background -->
+    <div class="universe-bg">
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-circle"></div>
+                    <div class="logo-bar"></div>
+                </div>
+                <span>iCompliance</span>
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html">Calculator</a></li>
+                <li class="nav-item"><a href="compliance-matrix.html">Compliance Matrix</a></li>
+                <li class="nav-item"><a href="#" class="active">AI Chatbot</a></li>
+                <li class="nav-item"><a href="index.html#countries">Country Database</a></li>
+                <li class="nav-item"><a href="Cross-Border-Hiring-Assessment.html" target="_blank">Cross-Border Assessment</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <div class="hero">
+                <h1>AI Compliance Assistant</h1>
+                <p>Ask me about cross-border compliance for healthcare professionals.</p>
+            </div>
+            <div class="chat-container">
+                <div id="chat-messages">
+                    <!-- Chat messages will be appended here by JavaScript -->
+                </div>
+                 <div id="suggested-prompts-container">
+                    <!-- Suggested prompts will be injected here -->
+                </div>
+                <form id="chat-input-form" autocomplete="off">
+                    <input id="chat-input" type="text" placeholder="Type your question..." autocomplete="off" required />
+                    <button id="send-button" type="submit"><i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- CHATBOT SCRIPT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatMessages = document.getElementById('chat-messages');
+            const chatInputForm = document.getElementById('chat-input-form');
+            const chatInput = document.getElementById('chat-input');
+            const sendButton = document.getElementById('send-button');
+            const suggestedPromptsContainer = document.getElementById('suggested-prompts-container');
+            const showdownConverter = new showdown.Converter({ghCompatibleHeaderId: true, simpleLineBreaks: true});
+
+            const ALLOWED_SERVICES = ['counselling', 'counselling-psychology', 'clinical'];
+            let messageHistory = [];
+            let conversationState = {
+                pendingConfirmation: false,
+                entities: null,
+            };
+
+            // --- Core Compliance & Utility Functions ---
+
+            function getLevenshteinDistance(a, b) {
+                if (a.length === 0) return b.length;
+                if (b.length === 0) return a.length;
+                const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
+                for (let i = 0; i <= a.length; i++) { matrix[0][i] = i; }
+                for (let j = 0; j <= b.length; j++) { matrix[j][0] = j; }
+                for (let j = 1; j <= b.length; j++) {
+                    for (let i = 1; i <= a.length; i++) {
+                        const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                        matrix[j][i] = Math.min(
+                            matrix[j][i - 1] + 1,
+                            matrix[j - 1][i] + 1,
+                            matrix[j - 1][i - 1] + cost
+                        );
+                    }
+                }
+                return matrix[b.length][a.length];
+            }
+
+            function findBestMatch(input, options) {
+                if (!input) return null;
+                const abbreviations = {
+                    "uk": "United Kingdom", "usa": "United States", "uae": "United Arab Emirates"
+                };
+                const lowerInput = input.toLowerCase();
+                if (abbreviations[lowerInput]) {
+                    return abbreviations[lowerInput];
+                }
+
+                let bestMatch = null;
+                let minDistance = Infinity;
+                const threshold = Math.floor(input.length * 0.4); 
+
+                for (const option of options) {
+                    const distance = getLevenshteinDistance(lowerInput, option.toLowerCase());
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        bestMatch = option;
+                    }
+                }
+                return minDistance <= threshold ? bestMatch : null;
+            }
+
+            function determineZone(jurisdictionName, service) {
+                if (typeof complianceData === 'undefined' || !complianceData.countries) {
+                    console.error("complianceData is not available.");
+                    return 'unknown';
+                }
+                const countryData = complianceData.countries[jurisdictionName];
+                if (!countryData) return 'unknown';
+                
+                if (countryData.colorCode && typeof countryData.colorCode === 'object') {
+                    return countryData.colorCode[service]?.toLowerCase() || 'unknown';
+                }
+                return 'unknown';
+            }
+
+            function findComplianceRule(providerJurisdiction, clientJurisdiction, service) {
+                 if (typeof complianceData === 'undefined' || !complianceData.rules) {
+                    console.error("complianceData rules are not available.");
+                    return { status: 'error', requirements: 'Compliance data is not available.' };
+                }
+                const providerZone = determineZone(providerJurisdiction, service);
+                const clientZone = determineZone(clientJurisdiction, service);
+
+                if (providerZone === 'unknown' || clientZone === 'unknown') {
+                    return {
+                        status: 'conditional',
+                        requirements: `Could not determine the compliance zone for one or both locations ('${providerJurisdiction}' or '${clientJurisdiction}') for the service "${service}". A manual review is required.`,
+                        colorCode: `${providerZone}-${clientZone}`,
+                        updated: new Date().toISOString().split('T')[0]
+                    };
+                }
+
+                const colorMatrixRule = complianceData.rules.find(r =>
+                    r.clientColorCode?.toLowerCase() === clientZone &&
+                    r.providerColorCode?.toLowerCase() === providerZone
+                );
+
+                if (colorMatrixRule) {
+                    let status;
+                    const canEnable = String(colorMatrixRule.canEnableCrossBorder).toLowerCase();
+                    if (canEnable === 'yes') status = 'allowed';
+                    else if (canEnable === 'no') status = 'denied';
+                    else status = 'conditional';
+
+                    return {
+                        status,
+                        requirements: colorMatrixRule.notes || 'No specific notes available.',
+                        colorCode: `${providerZone}-${clientZone}`,
+                        updated: colorMatrixRule.updated || new Date().toISOString().split('T')[0]
+                    };
+                }
+
+                return {
+                    status: 'conditional',
+                    requirements: `No specific rule found for a ${providerZone.toUpperCase()} to ${clientZone.toUpperCase()} interaction. A detailed manual review is required.`,
+                    colorCode: `${providerZone}-${clientZone}`,
+                    updated: new Date().toISOString().split('T')[0]
+                };
+            }
+
+            async function callGeminiAPI(prompt, history = []) {
+                const apiKey = "AIzaSyC8YYkX29-4WyWBKWw-Sm6Cm2dATxgvpeA"; // User provided API Key
+                const modelName = "gemini-2.0-flash"; // Corrected Model Name
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+                
+                const fullHistory = [...history, { role: "user", parts: [{ text: prompt }] }];
+
+                const payload = {
+                    contents: fullHistory,
+                };
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        console.error("API Error Response:", result);
+                        const errorMessage = result?.error?.message || `API request failed with status ${response.status}.`;
+                        return `Error: ${errorMessage}`;
+                    }
+
+                    if (result.candidates && result.candidates[0]?.content?.parts[0]) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        console.error("Unexpected API response structure:", result);
+                        return "Error: Could not parse the AI's response.";
+                    }
+                } catch (error) {
+                    console.error('Error calling Gemini API:', error);
+                    return `An error occurred while contacting the AI assistant. Please check the browser console for more details.`;
+                }
+            }
+
+            function addMessage(message, sender) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('chat-message', `${sender}-message`);
+                let finalMessage = showdownConverter.makeHtml(message);
+                finalMessage = finalMessage.replace(/\b(RED|GREEN|BLUE|PENDING)\b/gi, (match) => {
+                    const upper = match.toUpperCase();
+                    return `<span class="compliance-zone ${upper}">${upper}</span>`;
+                });
+                messageElement.innerHTML = finalMessage;
+
+                chatMessages.appendChild(messageElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                messageHistory.push({ role: sender === 'user' ? 'user' : 'model', parts: [{ text: message }] });
+            }
+
+            function showThinkingIndicator() {
+                const thinkingElement = document.createElement('div');
+                thinkingElement.id = 'thinking-indicator';
+                thinkingElement.classList.add('chat-message', 'bot-message', 'thinking');
+                thinkingElement.innerHTML = '<div class="dot-flashing"></div>';
+                chatMessages.appendChild(thinkingElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function removeThinkingIndicator() {
+                const indicator = document.getElementById('thinking-indicator');
+                if (indicator) indicator.remove();
+            }
+            
+            // --- Main Chatbot Logic ---
+
+            async function getComplianceAnswer(entities) {
+                 const ruleResult = findComplianceRule(entities.provider_location, entities.client_location, entities.service_type);
+
+                const formulationPrompt = `
+                    You are a helpful AI assistant for iCompliance. Based ONLY on the structured data below, formulate a clear, conversational answer. 
+                    **Start your response with: "Based on our internal compliance data..."**
+
+                    ANALYSIS RESULT:
+                    - Provider: ${entities.provider_location}, Client: ${entities.client_location}, Service: ${entities.service_type.replace(/-/g, ' ')}
+                    - Status: ${ruleResult.status}
+                    - Zone Interaction: ${ruleResult.colorCode.toUpperCase()}
+                    - Notes for this Zone Interaction: "${ruleResult.requirements}"
+                    
+                    RESPONSE STRUCTURE:
+                    1.  Start with a bolded summary (e.g., "**Yes, this is generally allowed.**").
+                    2.  Explain the reason using the provided notes.
+                    3.  If status is 'conditional' or 'denied', add a "**What's Required?**" section with a bulleted list of actions.
+                    4.  Finish with an "**Assessment Summary:**" bulleted list (Provider, Client, Service, Status, Zone Interaction).
+                    5.  End with this exact disclaimer: "Please cross-verify this information with our official compliance source: [link](https://docs.google.com/spreadsheets/d/1TBDm2kx8WxqPr4bTYtKOtWdFt3DkYyHrIsCVuPBW2rQ/edit?gid=225412450#gid=225412450)"
+                `;
+                const finalAnswer = await callGeminiAPI(formulationPrompt);
+                addMessage(finalAnswer, 'bot');
+            }
+
+
+            async function processUserInput(userInput) {
+                addMessage(userInput, 'user');
+                chatInput.value = '';
+                sendButton.disabled = true;
+                hideSuggestedPrompts();
+                showThinkingIndicator();
+
+                try {
+                    if (conversationState.pendingConfirmation) {
+                        const confirmationPrompt = `The user was asked to confirm the previous analysis: ${JSON.stringify(conversationState.entities)}. Their new response is "${userInput}". Does this response mean "yes", "correct", "yep" or similar affirmation? Return only "yes" or "no".`;
+                        const confirmation = (await callGeminiAPI(confirmationPrompt)).trim().toLowerCase();
+                        if (confirmation === 'yes') {
+                            await getComplianceAnswer(conversationState.entities);
+                        } else {
+                            addMessage("My apologies. Let's try again. What compliance question can I help you with?", 'bot');
+                        }
+                        conversationState.pendingConfirmation = false;
+                        conversationState.entities = null;
+                        return;
+                    }
+
+                    const extractionPrompt = `
+                        Analyze the user's query to identify a provider_location, a client_location, and a service_type.
+                        - Handle common abbreviations like 'UK' for 'United Kingdom'.
+                        - Map professional roles to one of these three service types: 'counselling', 'counselling-psychology', or 'clinical'.
+                        - If the query does not contain enough information, return null for the missing keys.
+                        
+                        User Query: "${userInput}"
+
+                        Return ONLY a valid JSON object: {"provider_location": "...", "client_location": "...", "service_type": "..."}.
+                    `;
+                    const rawResponse = await callGeminiAPI(extractionPrompt);
+                    
+                    if (rawResponse.startsWith("Error:")) {
+                        throw new Error(rawResponse);
+                    }
+                    
+                    const cleanedResponse = rawResponse.replace(/```json|```/g, '').trim();
+                    let extractedEntities;
+                    try {
+                         extractedEntities = JSON.parse(cleanedResponse);
+                    } catch(e) {
+                         console.error("Failed to parse JSON from AI response:", cleanedResponse);
+                         addMessage("I had a little trouble understanding that. Could you please rephrase your compliance question?", 'bot');
+                         return;
+                    }
+
+
+                    const allCountryNames = Object.keys(complianceData.countries);
+                    const correctedProvider = findBestMatch(extractedEntities.provider_location, allCountryNames);
+                    const correctedClient = findBestMatch(extractedEntities.client_location, allCountryNames);
+
+                    if (correctedProvider && correctedClient && extractedEntities.service_type && ALLOWED_SERVICES.includes(extractedEntities.service_type)) {
+                        conversationState.pendingConfirmation = true;
+                        conversationState.entities = { provider_location: correctedProvider, client_location: correctedClient, service_type: extractedEntities.service_type };
+                        addMessage(`Okay, just to confirm: you're asking about a **${extractedEntities.service_type.replace('-', ' ')}** providing services from **${correctedProvider}** to a client in **${correctedClient}**. Is that correct?`, 'bot');
+                    } else if (correctedProvider && correctedClient) {
+                         addMessage(`I see you're asking about a provider from **${correctedProvider}** and a client in **${correctedClient}**. Could you please clarify which service you're interested in? I can provide information for:\n- Counselling\n- Counselling Psychology\n- Clinical Psychology`, 'bot');
+                    }
+                    else {
+                        const intentPrompt = `
+                            Classify the user's intent into 'greeting', 'capability_inquiry', 'definition_inquiry', 'acknowledgement', or 'general_query'.
+                            - greeting: "hi", "hey", "hello"
+                            - capability_inquiry: "what can you do?", "help"
+                            - definition_inquiry: "what is inbound?", "what's the difference?", "what do the colors mean?"
+                            - acknowledgement: "thanks", "ok", "got it", "great"
+                            - general_query: for anything else.
+                            
+                            User Input: "${userInput}"
+                            Return ONLY the classification as a single word string.
+                        `;
+                        const intent = (await callGeminiAPI(intentPrompt)).trim().toLowerCase().replace(/"/g, '');
+                         switch(intent) {
+                            case 'greeting': addMessage("Hello! How can I help you with your cross-border compliance questions today?", 'bot'); break;
+                            case 'capability_inquiry': addMessage("I am the iCompliance AI Assistant. I can help you understand the regulatory requirements for healthcare professionals providing services across different countries.", 'bot'); break;
+                            case 'definition_inquiry': addMessage("Of course. Here's a breakdown of the key terms:\n- **Inbound:** Rules for a professional providing services TO a client in a specific country.\n- **Outbound:** Rules for a professional FROM a country providing services elsewhere.\n- **Color Zones:** RED (highly regulated), BLUE (conditional), GREEN (open practice).", 'bot'); break;
+                            case 'acknowledgement': addMessage("You're welcome! Is there anything else I can help with?", 'bot'); break;
+                            default: addMessage("I'm sorry, I'm best at answering specific compliance questions between two countries for our supported services. How can I help?", 'bot'); break;
+                        }
+                    }
+
+                } catch (error) {
+                    console.error("Chatbot processing error:", error);
+                    addMessage("I'm having a little trouble processing that request right now. Please try rephrasing, or check the browser console for errors.", 'bot');
+                } finally {
+                    removeThinkingIndicator();
+                    sendButton.disabled = false;
+                    chatInput.focus();
+                }
+            }
+            
+            function showSuggestedPrompts() {
+                suggestedPromptsContainer.innerHTML = '';
+                const prompts = [
+                    "Can a counsellor from the UK serve a client in Australia?",
+                    "What are the rules for a psychologist in Spain for a client in France?",
+                    "Explain what 'inbound' and 'outbound' mean",
+                    "What do the colors RED, GREEN, and BLUE mean?"
+                ];
+                prompts.forEach(promptText => {
+                    const btn = document.createElement('button');
+                    btn.classList.add('prompt-suggestion');
+                    btn.textContent = promptText;
+                    btn.addEventListener('click', () => {
+                        processUserInput(promptText);
+                    });
+                    suggestedPromptsContainer.appendChild(btn);
+                });
+                suggestedPromptsContainer.style.opacity = 1;
+                suggestedPromptsContainer.style.transform = 'translateY(0)';
+            }
+
+            function hideSuggestedPrompts() {
+                suggestedPromptsContainer.style.opacity = 0;
+                suggestedPromptsContainer.style.transform = 'translateY(10px)';
+                setTimeout(() => {
+                    if(chatMessages.children.length > 2) { 
+                       suggestedPromptsContainer.innerHTML = '';
+                    }
+                }, 300);
+            }
+
+            
+            chatInputForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const userInput = chatInput.value.trim();
+                if (userInput) {
+                    processUserInput(userInput);
+                }
+            });
+            
+            addMessage("Welcome to the **iCompliance AI Assistant**! I can help you with questions about cross-border compliance for healthcare professionals.", 'bot', false);
+            showSuggestedPrompts();
+        
+        }); // End of DOMContentLoaded
+    </script>
+</body>
+</html>

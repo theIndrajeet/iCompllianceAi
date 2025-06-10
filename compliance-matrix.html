@@ -801,6 +801,7 @@
             <ul class="nav-menu" id="navMenu">
                 <li class="nav-item"><a href="index.html">Calculator</a></li>
                 <li class="nav-item"><a href="#" class="active">Compliance Matrix</a></li>
+                <li class="nav-item"><a href="compliance-bot.html">AI Chatbot</a></li>
                 <li class="nav-item"><a href="index.html#countries">Country Database</a></li>
                 <li class="nav-item"><a href="Cross-Border-Hiring-Assessment.html" target="_blank">Cross-Border Assessment</a></li>
             </ul>
@@ -953,26 +954,58 @@
         }
         
         async function callGeminiAPI(prompt) {
-            // This is your specific API key.
-            const apiKey = "AIzaSyC8YYkX29-4WyWBKWw-Sm6Cm2dATxgvpeA"; 
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-            const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+            // The API call is now routed through a secure backend proxy.
+            const apiUrl = '/api/gemini-proxy';
+
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+            };
 
             try {
+                modalBody.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center; color: var(--text-muted);">Generating AI-powered explanation...</p>';
+                console.log('Sending request to API proxy with prompt:', prompt.substring(0, 100) + '...');
+                
                 const response = await fetch(apiUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
                 });
-                if (!response.ok) throw new Error(`API Error: ${response.status}`);
-                const result = await response.json();
-                if (result.candidates && result.candidates[0].content.parts) {
-                    return result.candidates[0].content.parts[0].text;
+
+                // Try to get response content even if status is not OK
+                let responseJson;
+                try {
+                    responseJson = await response.json();
+                    console.log('API response received:', responseJson);
+                } catch (jsonError) {
+                    const textResponse = await response.text();
+                    console.error('Failed to parse response as JSON:', textResponse);
+                    return `<p style="color: var(--danger);">Sorry, there was an error parsing the API response. Please check the server logs.</p>`;
                 }
-                throw new Error("Invalid response structure from API.");
+
+                if (!response.ok) {
+                    const errorDetails = responseJson.details || responseJson.error || 'Unknown error';
+                    console.error('Error from API proxy:', responseJson);
+                    return `<p style="color: var(--danger);">Sorry, there was an error getting a response: ${errorDetails}. Please check that the server is properly configured with a valid API key.</p>`;
+                }
+
+                if (responseJson.candidates && 
+                    responseJson.candidates[0] && 
+                    responseJson.candidates[0].content && 
+                    responseJson.candidates[0].content.parts && 
+                    responseJson.candidates[0].content.parts[0].text) {
+                    return responseJson.candidates[0].content.parts[0].text;
+                } else if (responseJson.error) {
+                    console.error('API returned an error:', responseJson.error);
+                    return `<p style="color: var(--danger);">Sorry, the AI service returned an error: ${responseJson.error.message || 'Unknown error'}.</p>`;
+                } else {
+                    console.error('Unexpected response structure:', responseJson);
+                    return `<p style="color: var(--danger);">Sorry, I received an unexpected response format. Please try again later or check the server configuration.</p>`;
+                }
             } catch (error) {
                 console.error("Gemini API call failed:", error);
-                return `<p style="color: var(--danger);">Sorry, there was an error communicating with the AI. Please try again later. This is often caused by a CORS issue when running locally. Check the console for details.</p>`;
+                return `<p style="color: var(--danger);">Sorry, something went wrong with the AI service: ${error.message}. Please make sure the server is running and configured correctly.</p>`;
             }
         }
 
