@@ -197,8 +197,14 @@
             border-bottom-left-radius: 8px;
             box-shadow: 0 4px 24px 0 rgba(99,102,241,0.13);
         }
-        .bot-message.thinking {
-            display: flex; align-items: center; gap: 0.75rem; color: var(--text-muted);
+        .bot-message.thinking, .bot-message.planning {
+            display: flex; align-items: flex-start; gap: 0.75rem; color: var(--text-muted);
+            background: var(--card);
+        }
+        .bot-message.planning .planning-icon {
+             font-size: 1.2em;
+             color: var(--primary);
+             margin-top: 0.2em;
         }
         .bot-message p:last-child { margin-bottom: 0; }
         .bot-message h3 { color: var(--primary); margin-bottom: 0.75rem; font-size: 1.1rem; }
@@ -589,7 +595,7 @@
                     4.  Finish with an "**Assessment Summary:**" bulleted list (Provider, Client, Service, Status, Zone Interaction).
                     5.  End with this exact disclaimer: "Please cross-verify this information with our official compliance source: [link](https://docs.google.com/spreadsheets/d/1TBDm2kx8WxqPr4bTYtKOtWdFt3DkYyHrIsCVuPBW2rQ/edit?gid=225412450#gid=225412450)"
                 `;
-                const finalAnswer = await callGeminiAPI(formulationPrompt);
+                const finalAnswer = await callGeminiAPI(formulationPrompt, messageHistory);
                 addMessage(finalAnswer, 'bot');
             }
 
@@ -649,7 +655,12 @@
                     if (correctedProvider && correctedClient && extractedEntities.service_type && ALLOWED_SERVICES.includes(extractedEntities.service_type)) {
                         conversationState.pendingConfirmation = true;
                         conversationState.entities = { provider_location: correctedProvider, client_location: correctedClient, service_type: extractedEntities.service_type };
-                        addMessage(`Okay, just to confirm: you're asking about a **${extractedEntities.service_type.replace('-', ' ')}** providing services from **${correctedProvider}** to a client in **${correctedClient}**. Is that correct?`, 'bot');
+                        
+                        const planPrompt = `Based on the user's query for a ${extractedEntities.service_type} from ${correctedProvider} to ${correctedClient}, formulate a brief, bulleted "thinking process" message. It should state that you will check the regulatory zones for both countries, look up the rule for that interaction, and then generate a detailed answer. Start with "Okay, I understand."`;
+                        const plan = await callGeminiAPI(planPrompt, messageHistory);
+                        addMessage(plan, 'bot');
+                        addMessage(`Is this correct? (yes/no)`, 'bot');
+
                     } else if (correctedProvider && correctedClient) {
                          addMessage(`I see you're asking about a provider from **${correctedProvider}** and a client in **${correctedClient}**. Could you please clarify which service you're interested in? I can provide information for:\n- Counselling\n- Counselling Psychology\n- Clinical Psychology`, 'bot');
                     }
