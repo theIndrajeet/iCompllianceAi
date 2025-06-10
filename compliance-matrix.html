@@ -956,6 +956,7 @@
         async function callGeminiAPI(prompt) {
             // The API call is now routed through a secure backend proxy.
             const apiUrl = '/api/gemini-proxy';
+            const modalBody = document.getElementById('modal-body');
 
             const payload = {
                 contents: [{ role: "user", parts: [{ text: prompt }] }],
@@ -1054,6 +1055,10 @@
             const { provider, client, status, notes } = button.dataset;
             const modalBody = document.getElementById('modal-body');
 
+            // Clear modal body before showing loading spinner for scenario
+            modalBody.innerHTML = '';
+            modalBody.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center; color: var(--text-muted);">Generating AI-powered scenario...</p>';
+
             const scenarioPrompt = `
                 Create a brief, practical, hypothetical case study for a healthcare recruiter to illustrate the following compliance rule:
 
@@ -1065,15 +1070,12 @@
             `;
 
             const scenario = await callGeminiAPI(scenarioPrompt);
-            
-            // Append scenario to the modal body
-            const scenarioContainer = document.createElement('div');
-            scenarioContainer.innerHTML = `
-                <hr style="border-color: var(--border); margin: 2rem 0;">
+
+            // Replace modal body with scenario content only
+            modalBody.innerHTML = `
                 <h3><i class="fas fa-book-open"></i> Hypothetical Scenario</h3>
                 ${showdownConverter.makeHtml(scenario)}
             `;
-            modalBody.appendChild(scenarioContainer);
             
             // Scroll to the new content
             modalBody.scrollTop = modalBody.scrollHeight;
