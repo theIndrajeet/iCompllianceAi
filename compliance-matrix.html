@@ -283,7 +283,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-fill-color: transparent;
             margin-bottom: 1.5rem;
             animation: textGlow 3s ease-in-out infinite;
         }
@@ -954,8 +953,9 @@
         }
         
         async function callGeminiAPI(prompt) {
-            // The API call is now routed through a secure backend proxy.
-            const apiUrl = '/api/gemini-proxy';
+            // Making a direct call to the Gemini API instead of going through a proxy
+            const API_KEY = 'AIzaSyC8YYkX29-4WyWBKWw-Sm6Cm2dATxgvpeA'; // API key
+            const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${API_KEY}`;
             const modalBody = document.getElementById('modal-body');
 
             const payload = {
@@ -964,7 +964,7 @@
 
             try {
                 modalBody.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center; color: var(--text-muted);">Generating AI-powered explanation...</p>';
-                console.log('Sending request to API proxy with prompt:', prompt.substring(0, 100) + '...');
+                console.log('Sending direct request to Gemini API with prompt:', prompt.substring(0, 100) + '...');
                 
                 const response = await fetch(apiUrl, {
                     method: 'POST',
@@ -974,39 +974,74 @@
                     body: JSON.stringify(payload),
                 });
 
-                // Try to get response content even if status is not OK
-                let responseJson;
-                try {
-                    responseJson = await response.json();
-                    console.log('API response received:', responseJson);
-                } catch (jsonError) {
-                    const textResponse = await response.text();
-                    console.error('Failed to parse response as JSON:', textResponse);
-                    return `<p style="color: var(--danger);">Sorry, there was an error parsing the API response. Please check the server logs.</p>`;
-                }
+                const bodyAsText = await response.text(); // Read the body ONCE, regardless of status
 
                 if (!response.ok) {
-                    const errorDetails = responseJson.details || responseJson.error || 'Unknown error';
-                    console.error('Error from API proxy:', responseJson);
-                    return `<p style="color: var(--danger);">Sorry, there was an error getting a response: ${errorDetails}. Please check that the server is properly configured with a valid API key.</p>`;
+                    let errorDetailLog = ''; // For detailed logging
+                    let errorDetailUser = ''; // For user-facing message
+
+                    if (bodyAsText && bodyAsText.trim() !== "") {
+                        try {
+                            const errorJson = JSON.parse(bodyAsText);
+                            if (errorJson.error && errorJson.error.message) {
+                                errorDetailLog = errorJson.error.message;
+                                errorDetailUser = errorJson.error.message; // Use specific message if available
+                            } else if (errorJson.message) {
+                                errorDetailLog = errorJson.message;
+                                errorDetailUser = errorJson.message; // Use specific message if available
+                            } else {
+                                // If no specific message field, log the whole JSON for debugging, but give a generic message to user
+                                errorDetailLog = bodyAsText; 
+                                errorDetailUser = "The server returned an error without a specific message.";
+                            }
+                        } catch (parseError) {
+                            // If parsing fails, it means the error response was not JSON.
+                            errorDetailLog = bodyAsText; // Log the raw text
+                            errorDetailUser = "The server returned an error in a non-JSON format.";
+                            console.warn("Could not parse non-OK API response body as JSON. Raw body: " + bodyAsText + " Status: " + response.status, parseError);
+                        }
+                    } else {
+                        errorDetailLog = `Server returned status ${response.status} with an empty response body.`;
+                        errorDetailUser = `The server returned an error with an empty response.`;
+                    }
+                    const errorTextForLog = `API call failed. Status: ${response.status}. Detail: ${errorDetailLog}`;
+                    const errorTextForUser = `Sorry, the AI service isn't available right now (Status: ${response.status}). ${errorDetailUser}`;
+                    console.error("API Error:", errorTextForLog);
+                    return `<p style="color: var(--danger);">${errorTextForUser}</p>`;
                 }
 
-                if (responseJson.candidates && 
-                    responseJson.candidates[0] && 
-                    responseJson.candidates[0].content && 
-                    responseJson.candidates[0].content.parts && 
-                    responseJson.candidates[0].content.parts[0].text) {
-                    return responseJson.candidates[0].content.parts[0].text;
-                } else if (responseJson.error) {
-                    console.error('API returned an error:', responseJson.error);
-                    return `<p style="color: var(--danger);">Sorry, the AI service returned an error: ${responseJson.error.message || 'Unknown error'}.</p>`;
-                } else {
-                    console.error('Unexpected response structure:', responseJson);
-                    return `<p style="color: var(--danger);">Sorry, I received an unexpected response format. Please try again later or check the server configuration.</p>`;
+                // If response.ok is true, try to parse the bodyAsText
+                let parsedBody;
+                try {
+                    if (!bodyAsText || bodyAsText.trim() === "") {
+                        console.error('Successful API response, but body is empty.');
+                        return `<p style="color: var(--danger);">Sorry, the AI service returned an empty response. Please try again.</p>`;
+                    }
+                    parsedBody = JSON.parse(bodyAsText);
+                    console.log('API response received and parsed:', parsedBody);
+                } catch (jsonError) {
+                    console.error('Failed to parse successful API response as JSON. Raw body:', bodyAsText, jsonError);
+                    return `<p style="color: var(--danger);">Sorry, there was an error processing the AI's response. It was not in the expected format. Please try again.</p>`;
                 }
-            } catch (error) {
-                console.error("Gemini API call failed:", error);
-                return `<p style="color: var(--danger);">Sorry, something went wrong with the AI service: ${error.message}. Please make sure the server is running and configured correctly.</p>`;
+
+                if (parsedBody.candidates && 
+                    parsedBody.candidates[0] && 
+                    parsedBody.candidates[0].content && 
+                    parsedBody.candidates[0].content.parts && 
+                    parsedBody.candidates[0].content.parts[0].text) {
+                    return parsedBody.candidates[0].content.parts[0].text;
+                } else if (parsedBody.error) { // Check if the successfully parsed JSON itself indicates an error from Gemini
+                    console.error('API returned an error object in successful response structure:', parsedBody.error);
+                    const geminiErrorMessage = parsedBody.error.message || 'The AI service reported an unknown issue.';
+                    return `<p style="color: var(--danger);">Sorry, the AI service returned an error: ${geminiErrorMessage}</p>`;
+                } else {
+                    console.error('Unexpected response structure in successful API response:', parsedBody);
+                    return `<p style="color: var(--danger);">Sorry, I received an unexpected response format from the AI service. Please try again later.</p>`;
+                }
+
+            } catch (error) { // This is the outer catch for network errors (e.g., server down, DNS issue) or other issues with fetch itself
+                console.error("Gemini API call failed (e.g., network error, CORS, etc.):", error);
+                return `<p style="color: var(--danger);">Sorry, I couldn't connect to the AI service: ${error.message}. Please check your internet connection and make sure the server is running.</p>`;
             }
         }
 

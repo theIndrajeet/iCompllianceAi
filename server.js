@@ -322,7 +322,7 @@ app.get('/api/config', (req, res) => {
 });
 
 // Start the server
-app.listen(PORT, async () => {
+const server = app.listen(PORT, async () => {
     console.log(`Server is running on http://localhost:${PORT}`);
     console.log('Serving static files from:', path.join(__dirname));
     console.log('====================== ENV DEBUGGING ======================');
@@ -331,16 +331,36 @@ app.listen(PORT, async () => {
     console.log('GEMINI_API_KEY:', process.env.GEMINI_API_KEY ? 'Key exists (length: ' + process.env.GEMINI_API_KEY.length + ')' : 'NOT SET');
     console.log('==================== END ENV DEBUGGING ====================');
     
-    // Run a test API call to verify the key works
-    if (process.env.GEMINI_API_KEY) {
-        console.log('\n🔍 Testing Gemini API key...');
-        const keyWorks = await testGeminiAPI(process.env.GEMINI_API_KEY);
-        if (!keyWorks) {
-            console.error('\n❌ WARNING: Your Gemini API key did not work in the test!');
-            console.error('Please check that your key is valid and has access to the gemini-pro model.');
-            console.error('The application will continue running, but chatbot functionality may not work.');
+    try {
+        // Run a test API call to verify the key works
+        if (process.env.GEMINI_API_KEY) {
+            console.log('\n🔍 Testing Gemini API key...');
+            const keyWorks = await testGeminiAPI(process.env.GEMINI_API_KEY);
+            if (!keyWorks) {
+                console.error('\n❌ WARNING: Your Gemini API key did not work in the test!');
+                console.error('Please check that your key is valid and has access to the gemini-pro model.');
+                console.error('The application will continue running, but chatbot functionality may not work as expected.');
+            } else {
+                console.log('\n✅ API test completed successfully. Server is running and ready to handle requests.');
+            }
+        } else {
+            console.error('\n❌ Cannot test API key because none is set in environment variables! Chatbot functionality will be limited.');
         }
-    } else {
-        console.error('\n❌ Cannot test API key because none is set in environment variables!');
+    } catch (error) {
+        console.error('\n🚨 An error occurred during the initial API key test:');
+        console.error(error);
+        console.error('The server will continue running, but AI features might be affected. Please check the error details.');
     }
+});
+
+// Ensure the process stays running
+process.stdin.resume();
+
+// Handle graceful shutdown
+process.on('SIGINT', function() {
+    console.log('Closing server...');
+    server.close(() => {
+        console.log('Server closed. Exiting process.');
+        process.exit(0);
+    });
 });
