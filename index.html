@@ -2037,10 +2037,10 @@ Generate the explanation now.
                     <div class="requirement-card">
                         <div class="requirement-title">Counselling Psychology</div>
                         <div class="requirement-content">
-                            <p><strong>Regulated:</strong> ${country['counselling-psychology']?.regulated ? 'Yes' : 'No'}</p>
-                            <p><strong>Requirements:</strong> ${(country['counselling-psychology']?.requirements || 'N/A').replace(/\n/g, '<br>')}</p>
-                            <p><strong>Training:</strong> ${(country['counselling-psychology']?.training || 'N/A').replace(/\n/g, '<br>')}</p>
-                            <p><strong>Renewal:</strong> ${(country['counselling-psychology']?.renewal || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p><strong>Regulated:</strong> ${country.counsellingPsychology?.regulated ? 'Yes' : 'No'}</p>
+                            <p><strong>Requirements:</strong> ${(country.counsellingPsychology?.requirements || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p><strong>Training:</strong> ${(country.counsellingPsychology?.training || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p><strong>Renewal:</strong> ${(country.counsellingPsychology?.renewal || 'N/A').replace(/\n/g, '<br>')}</p>
                         </div>
                     </div>
                     <div class="requirement-card">
