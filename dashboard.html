@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iCompliance | Cross-Border Compliance Dashboard</title>
+    <!-- Navigation CSS -->
+    <link rel="stylesheet" href="navigation.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
@@ -79,105 +81,6 @@
         @keyframes float {
             0%, 100% { transform: translate(0, 0) scale(1); }
             50% { transform: translate(100px, 100px) scale(0.9); }
-        }
-
-        /* Navigation */
-        nav {
-            position: sticky;
-            top: 0;
-            width: 100%;
-            background: rgba(5, 5, 6, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            z-index: 1000;
-            padding: 1rem 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            color: var(--text);
-            text-decoration: none;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .logo-icon .logo-circle {
-            width: 20px;
-            height: 20px;
-            background: var(--gradient-1);
-            border-radius: 50%;
-        }
-
-        .logo-icon .logo-bar {
-            width: 10px;
-            height: 20px;
-            background: var(--gradient-1);
-            margin-left: 10px;
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 1rem;
-            list-style: none;
-        }
-
-        .nav-item a {
-            position: relative;
-            padding: 0.75rem 1.5rem;
-            cursor: pointer;
-            border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: 500;
-            color: var(--text-muted);
-            text-decoration: none;
-            display: block;
-            overflow: hidden;
-        }
-
-        .nav-item a:hover {
-            color: var(--text);
-            background: rgba(99, 102, 241, 0.1);
-        }
-
-        .nav-item a.active {
-            color: var(--text);
-            background: rgba(99, 102, 241, 0.2);
-        }
-
-        .nav-item a.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 3px;
-            background: var(--primary);
-            border-radius: 3px;
         }
 
         /* Main Content */
@@ -520,28 +423,8 @@
     <div class="universe-bg">
         <div class="floating-orb orb-1"></div>
         <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
     </div>
-
-    <!-- Navigation -->
-    <nav>
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                <div class="logo-icon">
-                    <div class="logo-circle"></div>
-                    <div class="logo-bar"></div>
-                </div>
-                iCompliance
-            </a>
-            <ul class="nav-menu">
-                <li class="nav-item"><a href="./dashboard.html" class="active">Dashboard</a></li>
-                <li class="nav-item"><a href="./index.html">Calculator</a></li>
-                <li class="nav-item"><a href="./compliance-matrix.html">Compliance Matrix</a></li>
-                <li class="nav-item"><a href="./index.html#countries-section">Country Database</a></li>
-                <li class="nav-item"><a href="./Cross-Border-Hiring-Assessment.html" target="_blank">Cross-Border Assessment</a></li>
-                <li class="nav-item"><a href="./compliance-bot.html">AI Chatbot</a></li>
-            </ul>
-        </div>
-    </nav>
 
     <!-- Main Content -->
     <main>
@@ -802,6 +685,9 @@
         </div>
     </main>
 
+    <!-- Navigation Script -->
+    <script src="navigation.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="complianceData.js"></script>
     <script src="dashboard.js"></script>

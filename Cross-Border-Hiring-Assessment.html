@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intellect - AI-Powered Cross-Border Hiring Assessment</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>iCompliance | Cross-Border Hiring Assessment</title>
+    <!-- Navigation CSS -->
+    <link rel="stylesheet" href="navigation.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <style>
         :root {
@@ -39,106 +40,6 @@
             min-height: 100vh;
         }
         
-        /* --- Navigation Styles (Imported & Adapted) --- */
-        nav {
-            position: sticky;
-            top: 0;
-            width: 100%;
-            background: rgba(15, 23, 42, 0.8); /* Using --dark color with opacity */
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            z-index: 1000;
-            padding: 1rem 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            color: var(--text);
-             text-decoration: none;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .logo-icon .logo-circle {
-            width: 20px;
-            height: 20px;
-            background: var(--gradient-1);
-            border-radius: 50%;
-        }
-
-        .logo-icon .logo-bar {
-            width: 10px;
-            height: 20px;
-            background: var(--gradient-1);
-            margin-left: 10px;
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 1rem;
-            list-style: none;
-        }
-
-        .nav-item a {
-            position: relative;
-            padding: 0.5rem 1.5rem;
-            cursor: pointer;
-            border-radius: 10px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: 500;
-            color: var(--text-muted);
-            text-decoration: none;
-            display: block;
-        }
-
-        .nav-item a:hover {
-            color: var(--text);
-            background: rgba(79, 70, 229, 0.1); /* Using --primary color with opacity */
-        }
-
-        .nav-item a.active {
-            color: var(--text);
-            background: rgba(79, 70, 229, 0.2);
-        }
-
-        .nav-item a.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 3px;
-            background: var(--primary);
-            border-radius: 3px;
-        }
-        
-        /* --- End of Navigation Styles --- */
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -453,277 +354,265 @@
     </style>
 </head>
 <body>
-
-    <!-- Navigation Menu -->
-    <nav id="navbar">
-        <div class="nav-container">
-            <a href="./index.html" class="logo">
-                <div class="logo-icon">
-                    <div class="logo-circle"></div>
-                    <div class="logo-bar"></div>
-                </div>
-                <span>iCompliance</span>
-            </a>
-            <ul class="nav-menu">
-                <li class="nav-item"><a href="./dashboard.html">Dashboard</a></li>
-                <li class="nav-item"><a href="./index.html">Calculator</a></li>
-                <li class="nav-item"><a href="./compliance-matrix.html">Compliance Matrix</a></li>
-                <li class="nav-item"><a href="./index.html#countries-section">Country Database</a></li>
-                <li class="nav-item"><a href="./Cross-Border-Hiring-Assessment.html" class="active" target="_blank">Cross-Border Assessment</a></li>
-                <li class="nav-item"><a href="./compliance-bot.html">AI Chatbot</a></li>
-            </ul>
-        </div>
-    </nav>
-    
-    <div class="container">
-        <div class="hero">
-            <h1>Cross-Border Hiring Assessment</h1>
-            <p>
-                Evaluate healthcare professionals' ability to serve clients across multiple jurisdictions
-            </p>
-        </div>
-
-        <!-- Back Button -->
-        <div class="back-button-container">
-            <a href="./index.html" class="back-button">
-                <i class="fas fa-arrow-left"></i>
-                <span>Back to Dashboard</span>
-            </a>
-        </div>
-        
-        <div class="info-box" style="max-width: 800px; margin: 0 auto 3rem;">
-            <span class="info-icon">🌍</span>
-            <div>
-                <strong>Purpose:</strong> This checklist helps assess candidates' cross-border practice capabilities, identify which markets they can serve, and document compliance requirements for different jurisdiction pairs.
-            </div>
-        </div>
-
-        <div class="main-grid">
-            <!-- Progress Sidebar -->
-            <div class="glass-card progress-sidebar" style="height: fit-content; position: sticky; top: 100px;">
-                <h3 style="margin-bottom: 1.5rem;">Assessment Progress</h3>
-                <div id="progressBar" style="width: 100%; height: 8px; background: var(--darker); border-radius: 4px; margin-bottom: 2rem;">
-                    <div id="progressFill" style="width: 0%; height: 100%; background: var(--gradient-1); border-radius: 4px; transition: width 0.3s;"></div>
-                </div>
-                <div id="progressText" style="text-align: center; font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-bottom: 2rem;">0%</div>
-                
-                <div id="checklistStats" style="display: grid; gap: 1rem;">
-                    <div style="padding: 1rem; background: var(--darker); border-radius: 8px;">
-                        <div style="color: var(--text-muted); font-size: 0.875rem;">Assessed Items</div>
-                        <div style="font-size: 1.25rem; font-weight: 600;" id="completedCount">0</div>
-                    </div>
-                    <div style="padding: 1rem; background: var(--darker); border-radius: 8px;">
-                        <div style="color: var(--text-muted); font-size: 0.875rem;">Total Items</div>
-                        <div style="font-size: 1.25rem; font-weight: 600;" id="totalCount">0</div>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 2rem; padding: 1rem; background: var(--darker); border-radius: 8px;">
-                    <h4 style="font-size: 1rem; margin-bottom: 0.5rem;">Jurisdiction Legend</h4>
-                    <div style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.6;">
-                        <div style="margin: 0.5rem 0;"><span class="jurisdiction-badge badge-green">GREEN</span> Full practice</div>
-                        <div style="margin: 0.5rem 0;"><span class="jurisdiction-badge badge-blue">BLUE</span> Limited practice</div>
-                        <div style="margin: 0.5rem 0;"><span class="jurisdiction-badge badge-red">RED</span> Not permitted</div>
-                    </div>
-                </div>
-                
-                <button class="calculate-btn" style="margin-top: 2rem;" onclick="exportAssessment()">
-                    Export Assessment Report
-                </button>
-                <button class="ai-btn" style="width: 100%; margin-top: 1rem;" onclick="generateAISummary()">
-                    ✨ Generate AI Summary & Risks
-                </button>
-            </div>
-
-            <!-- Checklist Items -->
-            <div>
-                <div class="glass-card" style="margin-bottom: 2rem;">
-                    <h3 style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
-                        <div class="step-number">1</div>
-                        Cross-Border License Mapping
-                    </h3>
-                    <div class="checklist-items">
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Map candidate's primary license jurisdiction and type</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Identify all countries where Intellect needs coverage</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Create jurisdiction matrix showing provider → client country permissions</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Document which countries candidate CAN serve (GREEN jurisdictions)</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Document which countries have limitations (BLUE jurisdictions)</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Note which countries candidate CANNOT serve (RED jurisdictions)</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="glass-card" style="margin-bottom: 2rem;">
-                    <h3 style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem;">
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <div class="step-number">2</div>
-                            International Practice Authorization
-                        </div>
-                        <button class="ai-btn" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="generateInterviewQuestions(this)">✨ Suggest Questions</button>
-                    </h3>
-                    <div class="checklist-items">
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Verify if home license explicitly allows international teletherapy</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Check for any geographic restrictions on current license</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Identify reciprocity agreements between jurisdictions</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Document any temporary practice permits available</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Research interstate compacts or regional agreements (e.g., PSYPACT, EU mobility)</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="glass-card" style="margin-bottom: 2rem;">
-                     <h3 style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
-                        <div class="step-number">3</div>
-                        Service Type Assessment by Market
-                    </h3>
-                    <div class="checklist-items">
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Determine which service types candidate can provide per jurisdiction</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Identify markets where only counselling/coaching is permitted (no diagnosis)</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Note markets where full clinical services are allowed</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Document any age restrictions (e.g., adults only, no minors)</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Check for specialty restrictions (e.g., substance abuse, couples therapy)</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="glass-card" style="margin-bottom: 2rem;">
-                    <h3 style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
-                        <div class="step-number">4</div>
-                        Cross-Border Insurance Verification
-                    </h3>
-                    <div class="checklist-items">
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Verify malpractice insurance covers international teletherapy</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Check insurance validity for each target market</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Identify any excluded countries or regions in insurance policy</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Document additional insurance requirements for specific countries</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Note any insurance coverage gaps that need addressing</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="glass-card" style="margin-bottom: 2rem;">
-                    <h3 style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem;">
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <div class="step-number">5</div>
-                            Cultural & Language Competency
-                        </div>
-                         <button class="ai-btn" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="generateInterviewQuestions(this)">✨ Suggest Questions</button>
-                    </h3>
-                    <div class="checklist-items">
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Assess language proficiencies for target markets</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Verify cultural competency training or experience</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Check time zone compatibility with target markets</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Document any market-specific certifications (e.g., cultural sensitivity)</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Identify markets where candidate has prior experience</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="glass-card">
-                    <h3 style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
-                        <div class="step-number">6</div>
-                        Cross-Border Capability Summary
-                    </h3>
-                    <div class="checklist-items">
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Create comprehensive market coverage map for candidate</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Calculate percentage of Intellect's markets candidate can serve</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Document service limitations by jurisdiction</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Identify potential for expanding coverage (additional licenses/permits)</span>
-                        </label>
-                        <label class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress()">
-                            <span>Prepare cross-border practice agreement outlining permitted services</span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Background -->
+    <div class="universe-bg">
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
     </div>
-    
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <div class="hero">
+                <h1>Cross-Border Hiring Assessment</h1>
+                <p>
+                    Evaluate healthcare professionals' ability to serve clients across multiple jurisdictions
+                </p>
+            </div>
+
+            <!-- Back Button -->
+            <div class="back-button-container">
+                <a href="./index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Dashboard</span>
+                </a>
+            </div>
+            
+            <div class="info-box" style="max-width: 800px; margin: 0 auto 3rem;">
+                <span class="info-icon">🌍</span>
+                <div>
+                    <strong>Purpose:</strong> This checklist helps assess candidates' cross-border practice capabilities, identify which markets they can serve, and document compliance requirements for different jurisdiction pairs.
+                </div>
+            </div>
+
+            <div class="main-grid">
+                <!-- Progress Sidebar -->
+                <div class="glass-card progress-sidebar" style="height: fit-content; position: sticky; top: 100px;">
+                    <h3 style="margin-bottom: 1.5rem;">Assessment Progress</h3>
+                    <div id="progressBar" style="width: 100%; height: 8px; background: var(--darker); border-radius: 4px; margin-bottom: 2rem;">
+                        <div id="progressFill" style="width: 0%; height: 100%; background: var(--gradient-1); border-radius: 4px; transition: width 0.3s;"></div>
+                    </div>
+                    <div id="progressText" style="text-align: center; font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-bottom: 2rem;">0%</div>
+                    
+                    <div id="checklistStats" style="display: grid; gap: 1rem;">
+                        <div style="padding: 1rem; background: var(--darker); border-radius: 8px;">
+                            <div style="color: var(--text-muted); font-size: 0.875rem;">Assessed Items</div>
+                            <div style="font-size: 1.25rem; font-weight: 600;" id="completedCount">0</div>
+                        </div>
+                        <div style="padding: 1rem; background: var(--darker); border-radius: 8px;">
+                            <div style="color: var(--text-muted); font-size: 0.875rem;">Total Items</div>
+                            <div style="font-size: 1.25rem; font-weight: 600;" id="totalCount">0</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem; padding: 1rem; background: var(--darker); border-radius: 8px;">
+                        <h4 style="font-size: 1rem; margin-bottom: 0.5rem;">Jurisdiction Legend</h4>
+                        <div style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.6;">
+                            <div style="margin: 0.5rem 0;"><span class="jurisdiction-badge badge-green">GREEN</span> Full practice</div>
+                            <div style="margin: 0.5rem 0;"><span class="jurisdiction-badge badge-blue">BLUE</span> Limited practice</div>
+                            <div style="margin: 0.5rem 0;"><span class="jurisdiction-badge badge-red">RED</span> Not permitted</div>
+                        </div>
+                    </div>
+                    
+                    <button class="calculate-btn" style="margin-top: 2rem;" onclick="exportAssessment()">
+                        Export Assessment Report
+                    </button>
+                    <button class="ai-btn" style="width: 100%; margin-top: 1rem;" onclick="generateAISummary()">
+                        ✨ Generate AI Summary & Risks
+                    </button>
+                </div>
+
+                <!-- Checklist Items -->
+                <div>
+                    <div class="glass-card" style="margin-bottom: 2rem;">
+                        <h3 style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div class="step-number">1</div>
+                            Cross-Border License Mapping
+                        </h3>
+                        <div class="checklist-items">
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Map candidate's primary license jurisdiction and type</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Identify all countries where Intellect needs coverage</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Create jurisdiction matrix showing provider → client country permissions</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Document which countries candidate CAN serve (GREEN jurisdictions)</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Document which countries have limitations (BLUE jurisdictions)</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Note which countries candidate CANNOT serve (RED jurisdictions)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="glass-card" style="margin-bottom: 2rem;">
+                        <h3 style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div class="step-number">2</div>
+                                International Practice Authorization
+                            </div>
+                            <button class="ai-btn" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="generateInterviewQuestions(this)">✨ Suggest Questions</button>
+                        </h3>
+                        <div class="checklist-items">
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Verify if home license explicitly allows international teletherapy</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Check for any geographic restrictions on current license</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Identify reciprocity agreements between jurisdictions</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Document any temporary practice permits available</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Research interstate compacts or regional agreements (e.g., PSYPACT, EU mobility)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="glass-card" style="margin-bottom: 2rem;">
+                         <h3 style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div class="step-number">3</div>
+                            Service Type Assessment by Market
+                        </h3>
+                        <div class="checklist-items">
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Determine which service types candidate can provide per jurisdiction</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Identify markets where only counselling/coaching is permitted (no diagnosis)</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Note markets where full clinical services are allowed</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Document any age restrictions (e.g., adults only, no minors)</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Check for specialty restrictions (e.g., substance abuse, couples therapy)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="glass-card" style="margin-bottom: 2rem;">
+                        <h3 style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div class="step-number">4</div>
+                            Cross-Border Insurance Verification
+                        </h3>
+                        <div class="checklist-items">
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Verify malpractice insurance covers international teletherapy</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Check insurance validity for each target market</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Identify any excluded countries or regions in insurance policy</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Document additional insurance requirements for specific countries</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Note any insurance coverage gaps that need addressing</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="glass-card" style="margin-bottom: 2rem;">
+                        <h3 style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div class="step-number">5</div>
+                                Cultural & Language Competency
+                            </div>
+                             <button class="ai-btn" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="generateInterviewQuestions(this)">✨ Suggest Questions</button>
+                        </h3>
+                        <div class="checklist-items">
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Assess language proficiencies for target markets</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Verify cultural competency training or experience</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Check time zone compatibility with target markets</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Document any market-specific certifications (e.g., cultural sensitivity)</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Identify markets where candidate has prior experience</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <h3 style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div class="step-number">6</div>
+                            Cross-Border Capability Summary
+                        </h3>
+                        <div class="checklist-items">
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Create comprehensive market coverage map for candidate</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Calculate percentage of Intellect's markets candidate can serve</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Document service limitations by jurisdiction</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Identify potential for expanding coverage (additional licenses/permits)</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" onchange="updateProgress()">
+                                <span>Prepare cross-border practice agreement outlining permitted services</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
     <!-- AI Modal -->
     <div class="modal-overlay" id="ai-modal">
         <div class="modal-content">
@@ -737,7 +626,9 @@
         </div>
     </div>
 
-
+    <!-- Navigation Script -->
+    <script src="navigation.js"></script>
+    
     <script>
         const showdownConverter = new showdown.Converter();
         

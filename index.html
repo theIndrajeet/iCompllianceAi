@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iCompliance | Compliance Research Tool</title>
+    <!-- Navigation CSS -->
+    <link rel="stylesheet" href="navigation.css">
     <style>
         * {
             margin: 0;
@@ -915,13 +917,69 @@
         }
 
         /* Responsive */
+        /* Menu Toggle Button */
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 1000;
+        }
+        
+        .menu-toggle .bar {
+            display: block;
+            width: 25px;
+            height: 3px;
+            margin: 5px auto;
+            transition: all 0.3s ease-in-out;
+            background-color: var(--text);
+            border-radius: 3px;
+        }
+        
         @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+            
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background-color: var(--darker);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+                padding: 2rem 0;
+                border-top: 1px solid var(--border);
+                z-index: 1000;
+            }
+            
+            .nav-menu.active {
+                left: 0;
+            }
+            
+            .menu-toggle.active .bar:nth-child(1) {
+                transform: translateY(8px) rotate(45deg);
+            }
+            
+            .menu-toggle.active .bar:nth-child(2) {
+                opacity: 0;
+            }
+            
+            .menu-toggle.active .bar:nth-child(3) {
+                transform: translateY(-8px) rotate(-45deg);
+            }
+            
             .calculator-grid {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
 
-            .countries-grid {
-                grid-template-columns: 1fr; 
+            .collapse-btn {
+                display: flex;
             }
 
             .hero h1 {
@@ -1123,27 +1181,6 @@
         <div class="floating-orb orb-2"></div>
         <div class="floating-orb orb-3"></div>
     </div>
-
-    <!-- Navigation -->
-    <nav id="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <div class="logo-icon">
-                    <div class="logo-circle"></div>
-                    <div class="logo-bar"></div>
-                </div>
-                <span>iCompliance</span>
-            </div>
-            <ul class="nav-menu">
-                <li class="nav-item"><a href="./dashboard.html">Dashboard</a></li>
-                <li class="nav-item"><a href="#calculator" class="active" onclick="showSection(event, 'calculator')">Calculator</a></li>
-                <li class="nav-item"><a href="./compliance-matrix.html">Compliance Matrix</a></li>
-                <li class="nav-item"><a href="#countries" onclick="showSection(event, 'countries')">Country Database</a></li>
-                <li class="nav-item"><a href="./Cross-Border-Hiring-Assessment.html" target="_blank">Cross-Border Assessment</a></li>
-                <li class="nav-item"><a href="./compliance-bot.html">AI Chatbot</a></li>
-            </ul>
-        </div>
-    </nav>
 
     <!-- Main Content -->
     <main>
@@ -2138,7 +2175,17 @@ Generate the explanation now.
 
 
         // --- INITIALIZATION ---
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Navigation Menu Toggle
+            const menuToggle = document.getElementById('menuToggle');
+            const navMenu = document.getElementById('navMenu');
+            
+            if (menuToggle && navMenu) {
+                menuToggle.addEventListener('click', function() {
+                    menuToggle.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                });
+            }
             populateJurisdictionDropdowns();
             updateSummaryCounts();
             const firstNavItem = document.querySelector('.nav-item');
@@ -2238,5 +2285,6 @@ Generate the explanation now.
     <div style="position: fixed; bottom: 10px; right: 10px; font-size: 0.85em; color: #666;">
         Powered by Intellect Legal Team
     </div>
+    <script src="navigation.js"></script>
 </body>
 </html>

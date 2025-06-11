@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iCompliance | Rule Matrix</title>
+    <title>iCompliance | Compliance Matrix</title>
+    <!-- Navigation CSS -->
+    <link rel="stylesheet" href="navigation.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <style>
@@ -66,182 +68,6 @@
         @keyframes moveStars {
             from { transform: translateY(0); }
             to { transform: translateY(-200px); }
-        }
-
-        /* Enhanced Navigation */
-        nav {
-            position: sticky;
-            top: 0;
-            width: 100%;
-            background: rgba(5, 5, 6, 0.9);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border-bottom: 1px solid var(--border);
-            z-index: 1000;
-            padding: 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        nav.scrolled {
-            padding: 0;
-            background: rgba(5, 5, 6, 0.95);
-            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: padding 0.3s ease;
-        }
-
-        nav.scrolled .nav-container {
-            padding: 0.75rem 2rem;
-        }
-
-        /* Animated Logo */
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            color: var(--text);
-            text-decoration: none;
-            transition: transform 0.3s ease;
-        }
-
-        .logo:hover {
-            transform: translateY(-2px);
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            animation: logoFloat 3s ease-in-out infinite;
-        }
-
-        @keyframes logoFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-
-        .logo-icon .logo-circle {
-            width: 20px;
-            height: 20px;
-            background: var(--gradient-1);
-            border-radius: 50%;
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-        }
-
-        .logo-icon .logo-bar {
-            width: 10px;
-            height: 20px;
-            background: var(--gradient-1);
-            margin-left: 10px;
-            box-shadow: 0 0 20px rgba(118, 75, 162, 0.5);
-        }
-
-        /* Enhanced Navigation Menu */
-        .nav-menu {
-            display: flex;
-            gap: 0.5rem;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .nav-item {
-            position: relative;
-        }
-
-        .nav-item a {
-            position: relative;
-            padding: 0.75rem 1.5rem;
-            cursor: pointer;
-            border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: 500;
-            color: var(--text-muted);
-            text-decoration: none;
-            display: block;
-            overflow: hidden;
-        }
-
-        .nav-item a::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(99, 102, 241, 0);
-            transition: background 0.3s ease;
-            z-index: -1;
-        }
-
-        .nav-item a:hover::before {
-            background: rgba(99, 102, 241, 0.15);
-        }
-
-        .nav-item a:hover {
-            color: var(--text);
-            transform: translateY(-2px);
-        }
-
-        .nav-item a.active {
-            color: var(--text);
-            background: rgba(99, 102, 241, 0.2);
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
-        }
-        
-        .nav-item a.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40%;
-            height: 3px;
-            background: var(--gradient-1);
-            border-radius: 3px 3px 0 0;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from { width: 0; }
-            to { width: 40%; }
-        }
-
-        /* Mobile Menu Button */
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--text);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.5rem;
-            transition: transform 0.3s ease;
-        }
-
-        .menu-toggle:hover {
-            transform: scale(1.1);
         }
 
         /* Main Content */
@@ -711,28 +537,6 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .nav-menu {
-                position: fixed;
-                left: -100%;
-                top: 70px;
-                flex-direction: column;
-                background-color: var(--darker);
-                width: 100%;
-                text-align: center;
-                transition: 0.3s;
-                box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
-                padding: 2rem 0;
-                border-top: 1px solid var(--border);
-            }
-
-            .nav-menu.active {
-                left: 0;
-            }
-
-            .menu-toggle {
-                display: block;
-            }
-
             .hero h1 {
                 font-size: 2rem;
             }
@@ -781,32 +585,14 @@
     </style>
 </head>
 <body>
+    <!-- Background -->
     <div class="universe-bg">
-        <div class="stars"></div>
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
     </div>
 
-    <nav id="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                <div class="logo-icon">
-                    <div class="logo-circle"></div>
-                    <div class="logo-bar"></div>
-                </div>
-                <span>iCompliance</span>
-            </a>
-            <button class="menu-toggle" onclick="toggleMenu()">
-                <i class="fas fa-bars"></i>
-            </button>
-            <ul class="nav-menu" id="navMenu">
-                <li class="nav-item"><a href="index.html">Calculator</a></li>
-                <li class="nav-item"><a href="#" class="active">Compliance Matrix</a></li>
-                <li class="nav-item"><a href="compliance-bot.html">AI Chatbot</a></li>
-                <li class="nav-item"><a href="index.html#countries">Country Database</a></li>
-                <li class="nav-item"><a href="Cross-Border-Hiring-Assessment.html" target="_blank">Cross-Border Assessment</a></li>
-            </ul>
-        </div>
-    </nav>
-
+    <!-- Main Content -->
     <main>
         <div class="container">
             <div class="hero">
@@ -855,6 +641,8 @@
     <footer>
         © 2025 Intellect (Prototype by Legal Team - Intellect). All rights reserved. For internal review only.
     </footer>
+
+    <script src="navigation.js"></script>
 
     <script>
         const showdownConverter = new showdown.Converter({
@@ -913,22 +701,6 @@
                 button.addEventListener('click', handleExplainClick);
             });
         }
-
-        // --- Navigation Enhancement ---
-        function toggleMenu() {
-            const navMenu = document.getElementById('navMenu');
-            navMenu.classList.toggle('active');
-        }
-
-        // Navbar scroll effect
-        window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
 
         // --- Modal & AI Logic ---
         function openModal() {
