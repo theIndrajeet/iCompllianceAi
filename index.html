@@ -198,7 +198,7 @@
             list-style: none;
         }
 
-        .nav-item {
+        .nav-item a {
             position: relative;
             padding: 0.5rem 1.5rem;
             cursor: pointer;
@@ -206,22 +206,24 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-weight: 500;
             color: var(--text-muted);
+            text-decoration: none;
+            display: block;
         }
 
-        .nav-item:hover {
+        .nav-item a:hover {
             color: var(--text);
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(79, 70, 229, 0.1);
         }
 
-        .nav-item.active {
+        .nav-item a.active {
             color: var(--text);
-            background: rgba(99, 102, 241, 0.2);
+            background: rgba(79, 70, 229, 0.2);
         }
 
-        .nav-item.active::after {
+        .nav-item a.active::after {
             content: '';
             position: absolute;
-            bottom: -1px; /* Adjust if navbar padding changes */
+            bottom: -1px;
             left: 50%;
             transform: translateX(-50%);
             width: 30px;
@@ -1133,11 +1135,12 @@
                 <span>iCompliance</span>
             </div>
             <ul class="nav-menu">
-                <li class="nav-item" onclick="showSection(event, 'calculator')">Calculator</li>
-                <li class="nav-item" onclick="window.open('./compliance-matrix.html', '_self')">Compliance Matrix</li>
-                <li class="nav-item" onclick="showSection(event, 'countries')">Country Database</li>
-                <li class="nav-item" onclick="window.open('./Cross-Border-Hiring-Assessment.html', '_blank')">Cross-Border Assessment</li>
-                <li class="nav-item" onclick="window.open('./compliance-bot.html', '_self')">AI Chatbot</li>
+                <li class="nav-item"><a href="./dashboard.html">Dashboard</a></li>
+                <li class="nav-item"><a href="#calculator" class="active" onclick="showSection(event, 'calculator')">Calculator</a></li>
+                <li class="nav-item"><a href="./compliance-matrix.html">Compliance Matrix</a></li>
+                <li class="nav-item"><a href="#countries" onclick="showSection(event, 'countries')">Country Database</a></li>
+                <li class="nav-item"><a href="./Cross-Border-Hiring-Assessment.html" target="_blank">Cross-Border Assessment</a></li>
+                <li class="nav-item"><a href="./compliance-bot.html">AI Chatbot</a></li>
             </ul>
         </div>
     </nav>
