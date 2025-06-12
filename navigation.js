@@ -22,11 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 </button>
                 <ul class="nav-menu" id="navMenu">
                     <li class="nav-item"><a href="dashboard.html" ${currentPage === 'dashboard.html' ? 'class="active"' : ''}>Dashboard</a></li>
-                    <li class="nav-item"><a href="index.html" ${currentPage === 'index.html' ? 'class="active"' : ''}>Calculator</a></li>
-                    <li class="nav-item"><a href="compliance-matrix.html" ${currentPage === 'compliance-matrix.html' ? 'class="active"' : ''}>Compliance Matrix</a></li>
-                    <li class="nav-item"><a href="index.html#countries" ${currentPage === 'index.html' && window.location.hash === '#countries' ? 'class="active"' : ''}>Country Database</a></li>
+                    <li class="nav-item"><a href="index.html" ${currentPage === 'index.html' && window.location.hash !== '#countries' ? 'class="active"' : ''}>Calculator</a></li>
+                    <li class="nav-item"><a href="country-database.html" ${currentPage === 'country-database.html' ? 'class="active"' : ''}>Country Database</a></li>
                     <li class="nav-item"><a href="Cross-Border-Hiring-Assessment.html" ${currentPage === 'Cross-Border-Hiring-Assessment.html' ? 'class="active"' : ''}>Cross-Border Assessment</a></li>
                     <li class="nav-item"><a href="compliance-bot.html" ${currentPage === 'compliance-bot.html' ? 'class="active"' : ''}>AI Chatbot</a></li>
+                    <li class="nav-item"><a href="compliance-matrix.html" ${currentPage === 'compliance-matrix.html' ? 'class="active"' : ''}>Compliance Matrix</a></li>
                 </ul>
             </div>
         </nav>

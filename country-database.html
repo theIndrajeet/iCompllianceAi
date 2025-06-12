@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iCompliance | Country Database</title>
+    <link rel="stylesheet" href="navigation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* Shared styles from main page */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #2d9cdb;
+            --primary-dark: #4f46e5;
+            --secondary: #f2f2f2;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f0f10;
+            --darker: #050506;
+            --card: #18181b;
+            --border: #27272a;
+            --text: #fafafa;
+            --text-muted: #a1a1aa;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Advanced Background */
+        .universe-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: radial-gradient(ellipse at bottom, #1b1b2f 0%, #050506 100%);
+            overflow: hidden;
+        }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(45deg);
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--gradient-1);
+            top: -300px;
+            left: -300px;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--gradient-2);
+            bottom: -200px;
+            right: -200px;
+            animation-delay: -10s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--gradient-3);
+            top: 50%;
+            left: 50%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(100px, -100px) scale(1.1); }
+            50% { transform: translate(-100px, 100px) scale(0.9); }
+            75% { transform: translate(50px, 50px) scale(1.05); }
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 80px; /* Space for fixed navigation */
+            min-height: calc(100vh - 80px);
+            position: relative;
+            z-index: 1;
+            padding-top: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #fff 0%, #fff 50%, var(--primary) 50%, var(--secondary) 100%);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-shift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: rgba(24, 24, 27, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Country Cards */
+        .countries-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .country-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .country-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1;
+        }
+
+        .country-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .country-card:hover::before {
+            opacity: 0.05;
+        }
+
+        .country-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .country-flag {
+            width: 60px;
+            height: 40px;
+            background: var(--darker);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .country-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .country-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .country-card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .country-card-footer {
+            margin-top: 1.5rem;
+            color: var(--primary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--card);
+            border-radius: 24px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            position: sticky;
+            top: 0;
+            background: var(--card);
+            padding: 2rem;
+            border-bottom: 1px solid var(--border);
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            flex-grow: 1;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-close {
+            position: relative;
+            top: auto;
+            right: auto;
+            width: 40px;
+            height: 40px;
+            background: var(--darker);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .modal-close:hover {
+            background: var(--primary);
+            transform: rotate(90deg);
+        }
+
+        /* Requirements Grid */
+        .requirements-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .requirement-card {
+            background: var(--darker);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .requirement-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .requirement-content {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .requirement-content p {
+            margin-bottom: 0.5rem;
+        }
+
+        .requirement-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            main {
+                margin-top: 70px; /* Adjust for mobile nav height */
+            }
+            .container {
+                padding: 2rem 1rem;
+            }
+            .modal-content {
+                width: 95%;
+            }
+            .modal-header, .modal-body {
+                padding: 1.5rem;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Notification Styles */
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background -->
+    <div class="universe-bg">
+        <div class="stars"></div>
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <div class="hero">
+                <h1 class="fade-in">Country Database</h1>
+                <p class="fade-in" style="animation-delay: 0.1s">
+                    Detailed regulatory frameworks across global regions
+                </p>
+                <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 2rem; flex-wrap: wrap;">
+                    <div style="text-align: center;">
+                        <div id="jurisdictionCountHero" style="font-size: 2rem; font-weight: 700; color: var(--primary);">0</div>
+                        <div style="color: var(--text-muted); font-size: 0.875rem;">Jurisdictions</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div id="regionCountHero" style="font-size: 2rem; font-weight: 700; color: var(--success);">0</div>
+                        <div style="color: var(--text-muted); font-size: 0.875rem;">Global Regions</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div id="jobRolesCountHero" style="font-size: 2rem; font-weight: 700; color: var(--warning);">0</div>
+                        <div style="color: var(--text-muted); font-size: 0.875rem;">Role Types</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="countries-grid" id="countriesGrid">
+                <!-- Country cards will be populated dynamically -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modalTitle">Country Details</h2>
+                <div class="modal-close" onclick="closeModal(event)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content will be populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script src="navigation.js"></script>
+    <script src="complianceData.js"></script>
+    <script src="countrydatabase.js"></script>
+    <script>
+        // Generate stars
+        const starsContainer = document.querySelector('.stars');
+        if (starsContainer) {
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Utility functions
+        function getFlagForJurisdiction(jurisdictionName) {
+            const countryData = complianceData.countries[jurisdictionName];
+            if (countryData && countryData.flag) {
+                return countryData.flag;
+            }
+            
+            const normalizedName = jurisdictionName.toLowerCase().replace(/[&\s-]+/g, '').replace(/[,\.]/g, '');
+            
+            for (const [country, data] of Object.entries(complianceData.countries)) {
+                const normalizedCountry = country.toLowerCase().replace(/[&\s-]+/g, '').replace(/[,\.]/g, '');
+                if (normalizedCountry === normalizedName && data.flag) {
+                    return data.flag;
+                }
+            }
+            
+            if (jurisdictionName.includes(',')) {
+                const countryPart = jurisdictionName.split(',')[1].trim();
+                return getFlagForJurisdiction(countryPart);
+            }
+            
+            return '🌐';
+        }
+
+        function formatRegulatoryInfo(regulatoryText) {
+            if (!regulatoryText) return 'N/A';
+            const urlRegex = /(https?:\/\/[^\s()<>]+)/g;
+            return regulatoryText.replace(urlRegex, (url) => `<a href="${url}" target="_blank" style="color: var(--primary); text-decoration: underline;">${url}</a>`);
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            let bgColor;
+            switch(type) {
+                case 'error': bgColor = 'var(--danger)'; break;
+                case 'success': bgColor = 'var(--success)'; break;
+                default: bgColor = 'var(--primary)';
+            }
+            notification.style.cssText = `
+                position: fixed; top: 100px; right: 20px;
+                padding: 1.5rem 2rem; background: ${bgColor}; color: white;
+                border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                z-index: 3000; animation: slideInRight 0.3s ease-out; max-width: 400px;
+            `;
+            notification.innerHTML = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease-out forwards';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Country details modal
+        function showCountryDetails(countryName) {
+            const country = complianceData.countries[countryName];
+            if (!country) {
+                showNotification('Detailed requirements for ' + countryName + ' are being updated.', 'info');
+                return;
+            }
+            
+            const modal = document.getElementById('modalOverlay');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            if (!modal || !modalTitle || !modalBody) return;
+            
+            modalTitle.innerHTML = `${country.flag || getFlagForJurisdiction(country.name)} ${country.name} - Regulatory Framework`;
+            
+            modalBody.innerHTML = `
+                <div class="requirements-grid">
+                    <div class="requirement-card">
+                        <div class="requirement-title">Counselling</div>
+                        <div class="requirement-content">
+                            <p><strong>Regulated:</strong> ${country.counselling?.regulated ? 'Yes' : 'No'}</p>
+                            <p><strong>Requirements:</strong> ${(country.counselling?.requirements || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p><strong>Training:</strong> ${(country.counselling?.training || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p><strong>Renewal:</strong> ${(country.counselling?.renewal || 'N/A').replace(/\n/g, '<br>')}</p>
+                        </div>
+                    </div>
+                    <div class="requirement-card">
+                        <div class="requirement-title">Counselling Psychology</div>
+                        <div class="requirement-content">
+                            <p><strong>Regulated:</strong> ${country.counsellingPsychology?.regulated ? 'Yes' : 'No'}</p>
+                            <p><strong>Requirements:</strong> ${(country.counsellingPsychology?.requirements || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p><strong>Training:</strong> ${(country.counsellingPsychology?.training || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p><strong>Renewal:</strong> ${(country.counsellingPsychology?.renewal || 'N/A').replace(/\n/g, '<br>')}</p>
+                        </div>
+                    </div>
+                    <div class="requirement-card">
+                        <div class="requirement-title">Clinical Psychology</div>
+                        <div class="requirement-content">
+                            <p><strong>Regulated:</strong> ${country.clinical?.regulated ? 'Yes' : 'No'}</p>
+                            <p><strong>Requirements:</strong> ${(country.clinical?.requirements || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p><strong>Training:</strong> ${(country.clinical?.training || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p><strong>Renewal:</strong> ${(country.clinical?.renewal || 'N/A').replace(/\n/g, '<br>')}</p>
+                        </div>
+                    </div>
+                    <div class="requirement-card">
+                        <div class="requirement-title">Cross-Border Services</div>
+                        <div class="requirement-content">
+                            <p><strong>Inbound:</strong> ${(country.crossBorder?.inbound || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p><strong>Outbound:</strong> ${(country.crossBorder?.outbound || 'N/A').replace(/\n/g, '<br>')}</p>
+                        </div>
+                    </div>
+                    <div class="requirement-card" style="grid-column: 1/-1;">
+                        <div class="requirement-title">Additional Notes</div>
+                        <div class="requirement-content">
+                            <p>${(country.notes || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p style="margin-top: 1rem;"><strong>Primary Regulatory Body:</strong> ${formatRegulatoryInfo(country.regulatory)}</p>
+                            <p style="margin-top: 0.5rem;"><strong>Compliance Zone:</strong> ${typeof country.colorCode === 'string' ? country.colorCode.toUpperCase() : (typeof country.colorCode === 'object' ? 'VARIES (Service Specific)' : 'VARIES')}</p>
+                        </div>
+                    </div>
+                </div>`;
+            modal.classList.add('active');
+        }
+
+        function closeModal(event) {
+            if (!event || event.target === event.currentTarget || event.target.closest('.modal-close')) {
+                const modalOverlay = document.getElementById('modalOverlay');
+                if (modalOverlay) modalOverlay.classList.remove('active');
+            }
+        }
+
+        // Populate countries
+        function populateCountries() {
+            const grid = document.getElementById('countriesGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            
+            const allDisplayableJurisdictions = [];
+            Object.values(complianceData.countries).forEach(country => {
+                allDisplayableJurisdictions.push({
+                    name: country.name, region: country.region, hasDetailedData: true, data: country
+                });
+            });
+            
+            Object.entries(complianceData.jurisdictions).forEach(([region, regionJurisdictions]) => {
+                if (Array.isArray(regionJurisdictions)) {
+                    regionJurisdictions.forEach(jurisdictionName => {
+                        if (!allDisplayableJurisdictions.some(j => j.name === jurisdictionName)) {
+                            allDisplayableJurisdictions.push({ name: jurisdictionName, region: region, hasDetailedData: false, data: null });
+                        }
+                    });
+                }
+            });
+            
+            allDisplayableJurisdictions.sort((a, b) => {
+                const regionCompare = (a.region || "").localeCompare(b.region || "");
+                if (regionCompare !== 0) return regionCompare;
+                return (a.name || "").localeCompare(b.name || "");
+            });
+            
+            let currentRegion = '';
+            allDisplayableJurisdictions.forEach(jurisdiction => {
+                if (jurisdiction.region !== currentRegion) {
+                    currentRegion = jurisdiction.region;
+                    const regionHeader = document.createElement('div');
+                    regionHeader.style.gridColumn = '1 / -1';
+                    regionHeader.style.marginTop = '2rem';
+                    regionHeader.style.marginBottom = '1rem';
+                    const regionJurisdictionCount = complianceData.jurisdictions[currentRegion] ? complianceData.jurisdictions[currentRegion].length : 0;
+                    regionHeader.innerHTML = `<h2 style="font-size: 1.75rem; font-weight: 700; color: var(--primary);">${currentRegion}<span style="font-size: 1rem; color: var(--text-muted); font-weight: 500; margin-left: 1rem;">${regionJurisdictionCount} jurisdictions</span></h2>`;
+                    grid.appendChild(regionHeader);
+                }
+                
+                const card = document.createElement('div');
+                card.className = 'country-card glass-card';
+                const countryData = jurisdiction.data;
+                
+                if (countryData) {
+                    card.onclick = () => showCountryDetails(countryData.name);
+                    card.innerHTML = `
+                        <div class="country-header">
+                            <div class="country-flag">${countryData.flag || getFlagForJurisdiction(countryData.name)}</div>
+                            <div style="flex: 1;">
+                                <div class="country-name">${countryData.name}</div>
+                                <div class="country-meta">
+                                    <span>Regulatory: ${countryData.regulatory || 'N/A'}</span>
+                                    <span>Zone: ${typeof countryData.colorCode === 'string' ? countryData.colorCode.toUpperCase() : (typeof countryData.colorCode === 'object' ? 'VARIES (Service Specific)' : 'VARIES')}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="country-card-body">
+                            <div style="display: grid; gap: 0.5rem; font-size: 0.875rem;">
+                                <div><span style="color: ${countryData.counselling?.regulated ? 'var(--warning)' : 'var(--success)'}; margin-right: 0.5em;">●</span> Counselling: ${countryData.counselling?.regulated ? 'Regulated' : 'Unregulated'}</div>
+                                <div><span style="color: ${countryData.psychology?.regulated ? 'var(--danger)' : 'var(--success)'}; margin-right: 0.5em;">●</span> Psychology: ${countryData.psychology?.regulated ? 'Regulated' : 'Unregulated'}</div>
+                                <div><span style="color: ${countryData.clinical?.regulated ? 'var(--danger)' : 'var(--success)'}; margin-right: 0.5em;">●</span> Clinical: ${countryData.clinical?.regulated ? 'Regulated' : 'Unregulated'}</div>
+                            </div>
+                            <div class="country-card-footer">
+                                <span>View Details</span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
+                            </div>
+                        </div>`;
+                } else {
+                    const flagForBasic = getFlagForJurisdiction(jurisdiction.name);
+                    card.innerHTML = `
+                        <div class="country-header">
+                            <div class="country-flag">${flagForBasic}</div>
+                            <div style="flex: 1;">
+                                <div class="country-name">${jurisdiction.name}</div>
+                                <div class="country-meta"><span>Region: ${jurisdiction.region}</span></div>
+                            </div>
+                        </div>
+                        <div class="country-card-body">
+                            <div style="margin-top: 1rem; padding: 1rem; background: var(--darker); border-radius: 8px; text-align: center;">
+                                <p style="font-size: 0.875rem; color: var(--text-muted);">Full regulatory data pending.</p>
+                            </div>
+                            <div class="country-card-footer" style="justify-content: center; color: var(--text-muted); font-size: 0.875rem;">
+                                <span>Details in development</span>
+                            </div>
+                        </div>`;
+                }
+                grid.appendChild(card);
+            });
+            
+            const summaryCard = document.createElement('div');
+            summaryCard.className = 'glass-card';
+            summaryCard.style.gridColumn = '1 / -1';
+            summaryCard.style.marginTop = '3rem';
+            summaryCard.style.background = 'var(--gradient-1)';
+            summaryCard.style.color = 'white';
+            summaryCard.innerHTML = `
+                <div style="text-align: center;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">iCompliance Coverage</h3>
+                    <div style="display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap;">
+                        <div><div id="jurisdictionCountSummary" style="font-size: 3rem; font-weight: 700;">0</div><div style="opacity: 0.9;">Total Jurisdictions</div></div>
+                        <div><div id="regionCountSummary" style="font-size: 3rem; font-weight: 700;">0</div><div style="opacity: 0.9;">Regions Covered</div></div>
+                        <div><div style="font-size: 3rem; font-weight: 700;">${complianceData.jobRoles.length}</div><div style="opacity: 0.9;">Role Types</div></div>
+                    </div>
+                </div>`;
+            grid.appendChild(summaryCard);
+            
+            updateSummaryCounts();
+        }
+
+        function updateSummaryCounts() {
+            const totalJurisdictions = Object.keys(complianceData.countries).length;
+            const totalRegions = Object.keys(complianceData.jurisdictions).length;
+            const totalJobRoles = complianceData.jobRoles.length;
+            
+            const jurCountHero = document.getElementById('jurisdictionCountHero');
+            const regCountHero = document.getElementById('regionCountHero');
+            const jobRolesCountHero = document.getElementById('jobRolesCountHero');
+            const jurCountSummary = document.getElementById('jurisdictionCountSummary');
+            const regCountSummary = document.getElementById('regionCountSummary');
+            
+            if (jurCountHero) jurCountHero.textContent = totalJurisdictions;
+            if (regCountHero) regCountHero.textContent = totalRegions;
+            if (jobRolesCountHero) jobRolesCountHero.textContent = totalJobRoles;
+            if (jurCountSummary) jurCountSummary.textContent = totalJurisdictions;
+            if (regCountSummary) regCountSummary.textContent = totalRegions;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            populateCountries();
+            document.querySelectorAll('.fade-in').forEach((el, i) => {
+                el.style.animationDelay = `${i * 0.1}s`;
+            });
+        });
+    </script>
+
+    <footer style="text-align: center; margin-top: 50px; font-size: 0.9em; padding: 20px;">
+        2025 Intellect (Prototype by Legal Team - Intellect). All rights reserved. For internal review only.
+    </footer>
+    
+    <div style="position: fixed; bottom: 10px; right: 10px; font-size: 0.85em; color: #666;">
+        Powered by Intellect Legal Team
+    </div>
+</body>
+</html>
