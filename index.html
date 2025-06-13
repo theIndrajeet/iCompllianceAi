@@ -341,10 +341,10 @@
         .select-modern {
             width: 100%;
             padding: 1rem 3rem 1rem 1.5rem;
-            background: var(--darker);
+            background: rgba(24, 24, 27, 0.95);
             border: 2px solid var(--border);
             border-radius: 12px;
-            color: var(--text);
+            color: #1c8bf1;
             font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
@@ -1134,6 +1134,37 @@
         .microchip__spark--7 { animation-delay: 0.7s; }
         .microchip__spark--8 { animation-delay: 0.8s; }
         .microchip__spark--9 { animation-delay: 0.9s; }
+    </style>
+    <style>
+        /* --- Dropdown Styling --- */
+        select,
+        .select-modern,
+        input[list],
+        option {
+            color: #1c8bf1 !important;
+        }
+        
+        select option,
+        .select-modern option,
+        datalist option {
+            color: #1c8bf1 !important; /* Ensure consistent text color */
+            background: rgba(24, 24, 27, 0.95) !important; /* Darker background for better visibility */
+        }
+        
+        /* Ensure serviceType dropdown options have the correct color */
+        #serviceType option {
+            color: #1c8bf1 !important;
+        }
+
+        /* Change color for form labels like 'SERVICE TYPE' */
+        .form-label {
+            color: #1c8bf1 !important; /* Ensures visibility in light/dark mode */
+        }
+        
+        /* Style for datalist options */
+        datalist option {
+            color: #1c8bf1;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="complianceData.js"></script>
