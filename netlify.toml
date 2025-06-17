@@ -1,0 +1,16 @@
+# Configure Netlify to use dashboard.html as the main entry point
+[build]
+  publish = "."  # The directory that contains the files to deploy
+
+# Set up redirects
+[[redirects]]
+  from = "/*"
+  to = "/dashboard.html"
+  status = 200  # 200 means rewrite (not a redirect), so the URL stays the same
+
+# If you want to handle 404s by redirecting to dashboard.html as well
+[[redirects]]
+  from = "/*"
+  to = "/dashboard.html"
+  status = 404
+  force = true

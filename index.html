@@ -1,0 +1,2303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iCompliance | Compliance Research Tool</title>
+    <!-- Navigation CSS -->
+    <link rel="stylesheet" href="navigation.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2d9cdb; /* Intellect blue */
+            --primary-dark: #4f46e5;
+            --secondary: #f2f2f2; /* Intellect soft gray */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f0f10;
+            --darker: #050506;
+            --card: #18181b;
+            --border: #27272a;
+            --text: #fafafa;
+            --text-muted: #a1a1aa;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-success: linear-gradient(135deg, #13CE66 0%, #36D1DC 100%);
+            --gradient-warning: linear-gradient(135deg, #FDC830 0%, #F37335 100%);
+            --gradient-danger: linear-gradient(135deg, #FC466B 0%, #3F5EFB 100%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Advanced Background */
+        .universe-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: radial-gradient(ellipse at bottom, #1b1b2f 0%, #050506 100%);
+            overflow: hidden;
+        }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(45deg);
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--gradient-1);
+            top: -300px;
+            left: -300px;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--gradient-2);
+            bottom: -200px;
+            right: -200px;
+            animation-delay: -10s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--gradient-3);
+            top: 50%;
+            left: 50%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(100px, -100px) scale(1.1); }
+            50% { transform: translate(-100px, 100px) scale(0.9); }
+            75% { transform: translate(50px, 50px) scale(1.05); }
+        }
+
+        /* Navigation styles are in navigation.css */
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-icon .logo-circle {
+            width: 20px;
+            height: 20px;
+            background: var(--gradient-1);
+            border-radius: 50%;
+        }
+
+        .logo-icon .logo-bar {
+            width: 10px;
+            height: 20px;
+            background: var(--gradient-1);
+            margin-left: 10px;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+        }
+
+        .nav-item a {
+            position: relative;
+            padding: 0.5rem 1.5rem;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            color: var(--text-muted);
+            text-decoration: none;
+            display: block;
+        }
+
+        .nav-item a:hover {
+            color: var(--text);
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        .nav-item a.active {
+            color: var(--text);
+            background: rgba(79, 70, 229, 0.2);
+        }
+
+        .nav-item a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 80px; /* Adjust if nav height changes */
+            min-height: calc(100vh - 80px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #fff 0%, #fff 50%, var(--primary) 50%, var(--secondary) 100%);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-shift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+        }
+
+        /* Section */
+        .section {
+            display: none;
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: rgba(24, 24, 27, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Calculator Section */
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .input-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .input-card h2 {
+            font-size: 1.75rem;
+            margin-bottom: 2rem;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .select-wrapper {
+            position: relative;
+        }
+
+        .select-modern {
+            width: 100%;
+            padding: 1rem 3rem 1rem 1.5rem;
+            background: rgba(24, 24, 27, 0.95);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: #1c8bf1;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .select-modern:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .select-modern:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--text-muted);
+        }
+
+        /* Style for searchable dropdowns */
+        input[list] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            color: #1c8bf1; /* Changed from #1a202c to #1c8bf1 for better visibility */
+            font-weight: 500; /* Added font weight to make text more visible */
+            transition: all 0.2s ease;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        input[list]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .select-wrapper {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .select-wrapper input[list] {
+            padding-right: 2.5rem;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #6b7280;
+        }
+
+        .calculate-btn, .ai-explain-btn { /* Shared styles for buttons */
+            width: 100%;
+            padding: 1.25rem;
+            margin-top: 1rem; /* Adjusted margin for AI button */
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .calculate-btn {
+             background: var(--gradient-1);
+             margin-top: 2rem; /* Original margin for main button */
+        }
+        .ai-explain-btn {
+            background: var(--gradient-3); /* Different gradient for AI button */
+        }
+
+
+        .calculate-btn::before, .ai-explain-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .calculate-btn:hover::before, .ai-explain-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .calculate-btn:hover, .ai-explain-btn:hover {
+            transform: translateY(-2px);
+        }
+        .calculate-btn:hover { box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3); }
+        .ai-explain-btn:hover { box-shadow: 0 10px 30px rgba(79, 172, 254, 0.3); }
+
+
+        /* Result Display */
+        .result-display {
+            min-height: 400px;
+            background: var(--card);
+            border-radius: 20px;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, var(--primary), transparent);
+            animation: rotate 4s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none; /* Ensure clicks go through to elements below */
+        }
+
+        .result-display.active::before {
+            opacity: 0.1;
+        }
+
+        @keyframes rotate {
+            to { transform: rotate(360deg); }
+        }
+
+        .result-icon {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .result-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .result-status {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .result-message {
+
+.result-details {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--darker);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 400px;
+}
+        
+#aiSummaryDisplay {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(var(--primary-rgb, 99, 102, 241), 0.05); /* Slightly different background */
+    border: 1px solid var(--primary);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px; /* Can be wider */
+    text-align: left;
+    line-height: 1.7;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+#aiSummaryDisplay h4 {
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+}
+#aiSummaryDisplay p {
+    margin-bottom: 0.5rem;
+}
+.loading-spinner {
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-left-color: var(--primary);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    margin: 1rem auto;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+            line-height: 1.7;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        #aiSummaryDisplay h4 {
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+        #aiSummaryDisplay p {
+            margin-bottom: 0.5rem;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+
+        /* Status Indicators */
+        .status-allowed { color: var(--success); }
+        .status-semi { color: var(--primary); }
+        .status-conditional { color: var(--danger); }
+        .status-denied { color: var(--danger); }
+
+        /* Data Table */
+        .table-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .filter-btn {
+            padding: 1rem 1.5rem;
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            z-index: 5;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Table styles removed */
+
+        /* Country Cards */
+        .countries-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .country-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex; /* For better internal alignment */
+            flex-direction: column; /* Stack content vertically */
+        }
+
+        .country-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1; 
+        }
+
+        .country-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .country-card:hover::before {
+            opacity: 0.05;
+        }
+
+        .country-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem; 
+            margin-bottom: 1.5rem;
+        }
+
+        .country-flag {
+            width: 60px;
+            height: 40px;
+            background: var(--darker); 
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem; /* Adjusted for potentially larger flags */
+            border: 1px solid var(--border);
+            flex-shrink: 0; /* Prevent flag from shrinking */
+        }
+        .country-flag img { /* If using img for flags */
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+            border-radius: 6px; /* Slightly smaller than container for padding effect */
+        }
+
+
+        .country-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .country-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+        .country-card-body {
+            flex-grow: 1; /* Allow body to take remaining space */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Pushes footer to bottom */
+        }
+        .country-card-footer {
+            margin-top: 1.5rem; 
+            color: var(--primary); 
+            font-weight: 500; 
+            display: flex; 
+            align-items: center; 
+            gap: 0.5rem;
+        }
+
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            display: none; 
+            align-items: center; 
+            justify-content: center; 
+            opacity: 0;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active {
+            display: flex; 
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--card);
+            border-radius: 24px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            position: sticky;
+            top: 0;
+            background: var(--card); 
+            padding: 2rem;
+            border-bottom: 1px solid var(--border);
+            z-index: 10;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .modal-header h2 { 
+            flex-grow: 1;
+        }
+
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-close {
+            position: relative; 
+            top: auto; 
+            right: auto; 
+            width: 40px;
+            height: 40px;
+            background: var(--darker);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0; 
+        }
+
+        .modal-close:hover {
+            background: var(--primary);
+            transform: rotate(90deg);
+        }
+
+        /* Requirements Grid */
+        .requirements-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .requirement-card {
+            background: var(--darker);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .requirement-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .requirement-content {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .requirement-content p {
+            margin-bottom: 0.5rem;
+        }
+        .requirement-content p:last-child {
+            margin-bottom: 0;
+        }
+
+
+        /* Loading States */
+        .skeleton {
+            background: linear-gradient(90deg, var(--card) 25%, var(--border) 50%, var(--card) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Responsive */
+        /* Menu Toggle Button */
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 1000;
+        }
+        
+        .menu-toggle .bar {
+            display: block;
+            width: 25px;
+            height: 3px;
+            margin: 5px auto;
+            transition: all 0.3s ease-in-out;
+            background-color: var(--text);
+            border-radius: 3px;
+        }
+        
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+            
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background-color: var(--darker);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+                padding: 2rem 0;
+                border-top: 1px solid var(--border);
+                z-index: 1000;
+            }
+            
+            .nav-menu.active {
+                left: 0;
+            }
+            
+            .menu-toggle.active .bar:nth-child(1) {
+                transform: translateY(8px) rotate(45deg);
+            }
+            
+            .menu-toggle.active .bar:nth-child(2) {
+                opacity: 0;
+            }
+            
+            .menu-toggle.active .bar:nth-child(3) {
+                transform: translateY(-8px) rotate(-45deg);
+            }
+            
+            .calculator-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .collapse-btn {
+                display: flex;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem; 
+            }
+
+            .nav-menu {
+                display: none; 
+            }
+             .nav-container {
+                padding: 0 1rem;
+            }
+            .container {
+                padding: 2rem 1rem;
+            }
+            .modal-content {
+                width: 95%;
+            }
+            .modal-header, .modal-body {
+                padding: 1.5rem;
+            }
+            .modern-table td, .modern-table th {
+                padding: 0.75rem; /* Smaller padding for table cells on mobile */
+                font-size: 0.8rem; /* Smaller font for table content on mobile */
+            }
+            .modern-table td:nth-child(5) { /* Requirements column */
+                 min-width: 150px; 
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide-up {
+            animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tooltips */
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip-content {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--darker);
+            color: var(--text);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 100; 
+        }
+
+        .tooltip:hover .tooltip-content {
+            opacity: 1;
+        }
+
+        /* Status Animations */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Microchip Animation */
+        .microchip-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1rem 0;
+        }
+
+        .microchip {
+            width: 170px; /* Increased size */
+            height: 170px; /* Increased size */
+            color: var(--primary);
+        }
+
+        .microchip__lines {
+            stroke-width: 2.5;
+        }
+
+        .microchip__dot {
+            animation: microchipDot 4s infinite;
+        }
+
+        .microchip__line {
+            stroke-dashoffset: 0; /* Initial state for animation */
+            animation: microchipLine 4s infinite;
+        }
+
+        .microchip__spark {
+            stroke-dashoffset: 84; /* Initial state for animation, adjust if line length changes */
+            animation: microchipSpark 4s infinite;
+        }
+
+        .microchip__wave {
+            opacity: 0;
+            transform-origin: 25px 25px; /* Center of the wave symbol */
+            animation: microchipWave 4s infinite;
+        }
+
+        .microchip__wave--2 {
+            animation-delay: 0.3s;
+        }
+
+        .microchip__core {
+            transform: scale(0);
+            animation: microchipCore 4s infinite;
+            transform-origin: center; /* Ensure scaling from center */
+        }
+
+        @keyframes microchipDot {
+            0%, 5% { opacity: 0; }
+            15%, 100% { opacity: 1; }
+        }
+
+        @keyframes microchipLine {
+            0%, 10% { stroke-dashoffset: 42; } /* Start hidden */
+            30%, 100% { stroke-dashoffset: 0; } /* Fully drawn */
+        }
+
+        @keyframes microchipSpark {
+            0%, 10% { stroke-dashoffset: 84; } /* Start hidden (length of spark path * 2 for dasharray) */
+            50%, 51% { stroke-dashoffset: 0; }   /* Spark fully visible */
+            80%, 100% { stroke-dashoffset: -84; } /* Spark moved off */
+        }
+
+        @keyframes microchipWave {
+            0%, 15% { opacity: 0; transform: scale(0); }
+            20%, 40% { opacity: 1; }
+            60%, 100% { opacity: 0; transform: scale(2.5); }
+        }
+
+        @keyframes microchipCore {
+            0%, 15% { transform: scale(0); }
+            30%, 100% { transform: scale(1); }
+        }
+
+        /* Staggered animation delays for a more dynamic effect */
+        .microchip__dot--1 { animation-delay: 0.1s; }
+        .microchip__dot--2 { animation-delay: 0.2s; }
+        .microchip__dot--3 { animation-delay: 0.3s; }
+        .microchip__dot--4 { animation-delay: 0.3s; } /* Mirrored side */
+        .microchip__dot--5 { animation-delay: 0.2s; }
+        .microchip__dot--6 { animation-delay: 0.1s; }
+        .microchip__dot--7 { animation-delay: 0.1s; } /* Other axis */
+        .microchip__dot--8 { animation-delay: 0.2s; }
+        .microchip__dot--9 { animation-delay: 0.3s; }
+
+        .microchip__line--1 { animation-delay: 0.1s; }
+        .microchip__line--2 { animation-delay: 0.2s; }
+        .microchip__line--3 { animation-delay: 0.3s; }
+        .microchip__line--4 { animation-delay: 0.4s; }
+        .microchip__line--5 { animation-delay: 0.5s; }
+        .microchip__line--6 { animation-delay: 0.6s; }
+        .microchip__line--7 { animation-delay: 0.7s; }
+        .microchip__line--8 { animation-delay: 0.8s; }
+        .microchip__line--9 { animation-delay: 0.9s; }
+
+        .microchip__spark--1 { animation-delay: 0.1s; }
+        .microchip__spark--2 { animation-delay: 0.2s; }
+        .microchip__spark--3 { animation-delay: 0.3s; }
+        .microchip__spark--4 { animation-delay: 0.4s; }
+        .microchip__spark--5 { animation-delay: 0.5s; }
+        .microchip__spark--6 { animation-delay: 0.6s; }
+        .microchip__spark--7 { animation-delay: 0.7s; }
+        .microchip__spark--8 { animation-delay: 0.8s; }
+        .microchip__spark--9 { animation-delay: 0.9s; }
+    </style>
+    <style>
+        /* --- Dropdown Styling --- */
+        select,
+        .select-modern,
+        input[list],
+        option {
+            color: #1c8bf1 !important;
+        }
+        
+        select option,
+        .select-modern option,
+        datalist option {
+            color: #1c8bf1 !important; /* Ensure consistent text color */
+            background: rgba(24, 24, 27, 0.95) !important; /* Darker background for better visibility */
+        }
+        
+        /* Ensure serviceType dropdown options have the correct color */
+        #serviceType option {
+            color: #1c8bf1 !important;
+        }
+
+        /* Change color for form labels like 'SERVICE TYPE' */
+        .form-label {
+            color: #1c8bf1 !important; /* Ensures visibility in light/dark mode */
+        }
+        
+        /* Style for datalist options */
+        datalist option {
+            color: #1c8bf1;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="complianceData.js"></script>
+    <script src="navigation.js"></script>
+</head>
+<body>
+    <!-- Background -->
+    <div class="universe-bg">
+        <div class="stars"></div>
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Calculator Section -->
+            <section id="calculator" class="section active">
+                <div class="hero">
+                    <h1 class="fade-in">iCompliance Calculator</h1>
+                    <p class="fade-in" style="animation-delay: 0.1s">
+                        Advanced regulatory analysis across jurisdictions worldwide
+                    </p>
+                    <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 2rem; flex-wrap: wrap;">
+                        <div style="text-align: center;">
+                            <div id="jurisdictionCountHero" style="font-size: 2rem; font-weight: 700; color: var(--primary);">0</div>
+                            <div style="color: var(--text-muted); font-size: 0.875rem;">Jurisdictions</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div id="serviceTypeCountHero" style="font-size: 2rem; font-weight: 700; color: var(--secondary);">0</div>
+                            <div style="color: var(--text-muted); font-size: 0.875rem;">Service Types</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div id="regionCountHero" style="font-size: 2rem; font-weight: 700; color: var(--success);">0</div>
+                            <div style="color: var(--text-muted); font-size: 0.875rem;">Global Regions</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculator-grid">
+                    <div class="input-card glass-card slide-up">
+                        <h2>Configure Analysis Parameters</h2>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/>
+                                </svg>
+                                Client Location
+                            </label>
+                            <div class="select-wrapper">
+                                <input list="clientCountries" id="clientCountry" class="select-modern" placeholder="Type or select a country/state..." autocomplete="off">
+                                <datalist id="clientCountries">
+                                    {/* Options will be populated by JavaScript */}
+                                </datalist>
+                                <svg class="select-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M6 9l6 6 6-6"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                                Provider Location
+                            </label>
+                            <div class="select-wrapper">
+                                <input list="providerCountries" id="providerCountry" class="select-modern" placeholder="Type or select a country/state..." autocomplete="off">
+                                <datalist id="providerCountries">
+                                    {/* Options will be populated by JavaScript */}
+                                </datalist>
+                                <svg class="select-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M6 9l6 6 6-6"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 11H3v10h6V11z"/>
+                                    <path d="M15 3H9v18h6V3z"/>
+                                    <path d="M21 7h-6v14h6V7z"/>
+                                </svg>
+                                Service Type
+                            </label>
+                            <div class="select-wrapper">
+                                <select class="select-modern" id="serviceType">
+                                    <option value="">Select service type...</option>
+                                    <option value="counselling">Counselling Services</option>
+                                    <option value="counselling-psychology">Counselling Psychology</option>
+                                    <option value="clinical">Clinical Psychology</option>
+                                </select>
+                                <svg class="select-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M6 9l6 6 6-6"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <button class="calculate-btn" onclick="analyzeCompliance()">
+                            <span>Analyze Compliance</span>
+                        </button>
+                    </div>
+
+                    <div class="result-display glass-card" id="resultDisplay">
+                        <div style="text-align: center; color: var(--text-muted);">
+                            <div class="result-icon" style="margin: 0 auto 2rem;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3">
+                                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                                </svg>
+                            </div>
+                            <p>Configure parameters and analyze to see compliance status</p>
+                        </div>
+                        <div id="aiSummaryContainer" style="width:100%; margin-top:1.5rem;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Cards -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
+                    <div class="glass-card">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                    <polyline points="22 4 12 14.01 9 11.01"/>
+                                </svg>
+                            </div>
+                            <h3 style="font-size: 1.25rem; font-weight: 600;">Allowed</h3>
+                        </div>
+                        <p style="color: var(--text-muted); line-height: 1.6;">
+                            Service is generally allowed. Standard terms and conditions apply. No additional regulatory barriers.
+                        </p>
+                    </div>
+
+                    <div class="glass-card">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                                    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                            </div>
+                            <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--primary);">Semi Allowed</h3>
+                        </div>
+                        <p style="color: var(--text-muted); line-height: 1.6;">
+                            Service may be allowed with additional conditions. Please verify specific Blue zone requirements for the client jurisdiction.
+                        </p>
+                    </div>
+
+                    <div class="glass-card">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 40px; height: 40px; background: rgba(239, 68, 68, 0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                    <line x1="12" y1="9" x2="12" y2="13"/>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                                </svg>
+                            </div>
+                            <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--danger);">Conditional</h3>
+                        </div>
+                        <p style="color: var(--text-muted); line-height: 1.6;">
+                            Service is conditionally allowed and may require additional verification. A local license in the client's Red zone may be required.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Matrix Section -->
+            <section id="hero" class="hero fade-in">
+                <h1>iCompliance Tool – Powered by Intellect</h1>
+                <p style="font-style: italic; color: gray; font-size: 0.9em; margin-top: 10px;">
+                    *This is a prototype web tool developed by the Legal Team of Intellect. All rights reserved. Not an official release.*
+                </p>
+            </section>
+
+
+            <!-- Countries Section -->
+            <section id="countries" class="section">
+                <div class="hero">
+                    <h1 class="fade-in">Country Database</h1>
+                    <p class="fade-in" style="animation-delay: 0.1s">
+                        Detailed regulatory frameworks across global regions
+                    </p>
+                </div>
+
+                <div class="countries-grid" id="countriesGrid">
+                    <!-- Country cards will be populated dynamically -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modalTitle">Country Details</h2>
+                <div class="modal-close" onclick="closeModal(event)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content will be populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generate stars
+        const starsContainer = document.querySelector('.stars');
+        if (starsContainer) { // Check if element exists
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (navbar) { // Check if element exists
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            }
+        });
+        
+        // showCountryDetails function has been moved to an earlier, global scope position and this duplicate is removed.
+
+        // --- UTILITY FUNCTIONS ---
+        function getCurrentDate() {
+    return new Date().toISOString().split('T')[0];
+}
+
+        function formatRegulatoryInfo(regulatoryText) {
+            if (!regulatoryText) return 'N/A';
+            const urlRegex = /(https?:\/\/[^\s()<>]+)/g;
+            return regulatoryText.replace(urlRegex, (url) => `<a href="${url}" target="_blank" style="color: var(--primary); text-decoration: underline;">${url}</a>`);
+        }
+
+        // Helper: return basic regulatory info for a jurisdiction / service
+        function getJurisdictionRegInfo(jurisdiction, serviceType) {
+            const country = complianceData.countries[jurisdiction];
+            if (!country) return 'No regulatory information available';
+            const svc = country[serviceType] || {};
+            let info = '';
+            if (typeof svc.regulated !== 'undefined') {
+                info += svc.regulated ? 'Regulated' : 'Not regulated';
+            }
+            if (svc.requirements) {
+                info += (info ? ' – ' : '') + svc.requirements;
+            }
+            return info || 'Limited regulatory data available';
+        }
+
+        // --- SECTION NAVIGATION ---
+        function showSection(event, sectionId) {
+            document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+            const activeSection = document.getElementById(sectionId);
+            if (activeSection) activeSection.classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            if (event && event.currentTarget) {
+                 event.currentTarget.classList.add('active');
+            } else {
+                const fallbackNavItem = Array.from(document.querySelectorAll('.nav-item')).find(item => item.getAttribute('onclick').includes(sectionId));
+                if (fallbackNavItem) fallbackNavItem.classList.add('active');
+            }
+            
+            if (sectionId === 'countries' && document.getElementById('countriesGrid') && !document.getElementById('countriesGrid').children.length) {
+                populateCountries();
+            }
+        }
+
+        // --- COMPLIANCE ANALYSIS (CALCULATOR) & GEMINI API INTEGRATION ---
+        let currentAnalysisContext = {}; // Store context for AI explanation
+        
+        // Helper function to extract structured compliance rules
+        function getComplianceRules(provider, client, service, complianceData) {
+            // Get relevant country data
+            const providerData = complianceData.countries[provider];
+            const clientData = complianceData.countries[client];
+            if (!providerData || !clientData) return { generalRuleNote: 'Unknown', providerOutboundRule: 'Unknown', clientInboundRule: 'Unknown' };
+            
+            // Determine color codes
+            const serviceKey = service.toLowerCase();
+            let providerColorCode = determineZone(providerData.colorCode, serviceKey);
+            let clientColorCode = determineZone(clientData.colorCode, serviceKey);            
+            
+            // Find the general rule based on color codes
+            const generalRule = complianceData.rules.find(rule => 
+                rule.clientColorCode.toLowerCase() === clientColorCode.toLowerCase() && 
+                rule.providerColorCode.toLowerCase() === providerColorCode.toLowerCase());
+                
+            const generalRuleNote = generalRule ? generalRule.notes : 'No specific rule found for this color combination';
+            
+            // Get outbound/inbound rules from respective countries
+            const providerOutboundRule = providerData.crossBorder?.outbound || 'No specific outbound rule found';
+            const clientInboundRule = clientData.crossBorder?.inbound || 'No specific inbound rule found';
+            
+            return {
+                generalRuleNote,
+                providerOutboundRule,
+                clientInboundRule
+            };
+        }
+
+        async function getAIComplianceSummary() {
+            const aiSummaryDisplay = document.getElementById('aiSummaryDisplay');
+            if (!aiSummaryDisplay || !currentAnalysisContext.provider) {
+                showNotification('Please perform an analysis first.', 'warning');
+                return;
+            }
+
+            aiSummaryDisplay.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center;">✨ Generating AI explanation...</p>';
+            
+            const { provider, client, service, status } = currentAnalysisContext;
+            
+            // Get structured compliance rules
+            const rules = getComplianceRules(provider, client, service, complianceData);
+
+            // MODIFIED PROMPT to ground the AI in provided data
+            const prompt = `
+You are a helpful compliance assistant. Your task is to synthesize the provided regulatory details into a clear, actionable summary for a clinician.
+
+Based *only* on the structured information below, generate a concise explanation for the following cross-border compliance scenario. Do not introduce any information not present in these notes.
+
+**Scenario Details:**
+- **Provider Location:** ${provider}
+- **Client Location:** ${client}
+- **Service Type:** ${service.replace(/-/g, ' ')}
+- **Determined Compliance Status:** ${status}
+
+**Structured Regulatory Information:**
+- **1. General Rule (Based on a color-coded system):** "${rules.generalRuleNote}"
+- **2. Provider's Outbound Regulations (Rules for services *leaving* ${provider}):** "${rules.providerOutboundRule}"
+- **3. Client's Inbound Regulations (Rules for services *entering* ${client}):** "${rules.clientInboundRule}"
+
+**Your Explanation Must:**
+1.  Start with a clear, one-sentence summary of the overall situation based on the "Determined Compliance Status".
+2.  Explain the 'why' behind the status by synthesizing the three sources of information. Explain how the general rule, the provider's outbound rules, and the client's inbound rules work together.
+3.  If the status is "Conditional," clearly list the specific conditions or actions required, specifying whether they apply to the provider (outbound) or the client's jurisdiction (inbound).
+4.  Conclude with a clear, actionable next step for the user.
+5.  Do not repeat the input rules verbatim. Focus on clear interpretation.
+
+Generate the explanation now.
+            `;
+
+            try {
+                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                const payload = { contents: chatHistory };
+                const apiKey = "AIzaSyC8YYkX29-4WyWBKWw-Sm6Cm2dATxgvpeA"; // Gemini API key for AI-powered explanations
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Gemini API Error:", errorData);
+                    throw new Error(`Gemini API request failed with status ${response.status}: ${errorData.error?.message || 'Unknown error'}`);
+                }
+
+                const result = await response.json();
+                
+                let summaryText = "Could not retrieve an AI summary at this time. Please check the detailed requirements.";
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    summaryText = result.candidates[0].content.parts[0].text;
+                } else {
+                     console.warn("Unexpected Gemini API response structure:", result);
+                }
+                
+                aiSummaryDisplay.innerHTML = `<h4>✨ AI-Powered Explanation</h4><p>${summaryText.replace(/\n/g, '<br>')}</p>`;
+
+            } catch (error) {
+                console.error('Error fetching AI summary:', error);
+                aiSummaryDisplay.innerHTML = `<h4>✨ AI-Powered Explanation</h4><p style="color: var(--danger);">Error generating explanation: ${error.message}. Please refer to the detailed notes above.</p>`;
+                showNotification('Failed to get AI explanation. ' + error.message, 'error');
+            }
+        }
+
+
+        function analyzeCompliance() {
+            const clientJurisdiction = document.getElementById('clientCountry').value;
+            const providerJurisdiction = document.getElementById('providerCountry').value;
+            const service = document.getElementById('serviceType').value;
+            
+            if (!clientJurisdiction || !providerJurisdiction || !service) {
+                showNotification('Please select all parameters', 'error');
+                return;
+            }
+            
+            const resultDisplay = document.getElementById('resultDisplay');
+            if (!resultDisplay) return;
+            resultDisplay.classList.add('active');
+            
+            // Clear previous AI summary
+            const aiSummaryContainer = document.getElementById('aiSummaryContainer');
+            if (aiSummaryContainer) aiSummaryContainer.innerHTML = '';
+
+            resultDisplay.innerHTML = `
+        <div class="microchip-container">
+            <svg class="microchip" viewBox="0 0 128 128" width="128px" height="128px" role="img" aria-label="A square pops in emitting waves and lines, and sparks run through the lines">
+                <symbol id="dot-1"><circle r="3" cx="3" cy="38" /></symbol>
+                <symbol id="dot-2"><circle r="3" cx="3" cy="54" /></symbol>
+                <symbol id="dot-3"><circle r="3" cx="3" cy="70" /></symbol>
+                <symbol id="dot-4"><circle r="3" cx="3" cy="3" /></symbol>
+                <symbol id="dot-5"><circle r="3" cx="20" cy="3" /></symbol>
+                <symbol id="dot-6"><circle r="3" cx="3" cy="30" /></symbol>
+                <symbol id="dot-7"><circle r="3" cx="37" cy="3" /></symbol>
+                <symbol id="dot-8"><circle r="3" cx="54" cy="3" /></symbol>
+                <symbol id="dot-9"><circle r="3" cx="71" cy="3" /></symbol>
+                <symbol id="line-1"><polyline points="12 54,12 46,3 46,3 38" stroke-dasharray="42 42" /></symbol>
+                <symbol id="line-2"><polyline points="29 54,3 54" stroke-dasharray="42 42" /></symbol>
+                <symbol id="line-3"><polyline points="12 54,12 62,3 62,3 70" stroke-dasharray="42 42" /></symbol>
+                <symbol id="line-4"><polyline points="28 20,28 12,20 12,20 3" stroke-dasharray="60 60" /></symbol>
+                <symbol id="line-5"><polyline points="37 29,37 20,3 20,3 3" stroke-dasharray="60 60" /></symbol>
+                <symbol id="line-6"><polyline points="15 20,15 30,3 30" stroke-dasharray="60 60" /></symbol>
+                <symbol id="line-7"><polyline points="54 12,37 12,37 3" stroke-dasharray="43 43" /></symbol>
+                <symbol id="line-8"><polyline points="54 29,54 3" stroke-dasharray="43 43" /></symbol>
+                <symbol id="line-9"><polyline points="54 12,71 12,71 3" stroke-dasharray="43 43" /></symbol>
+                <symbol id="spark-1"><polyline points="12 54,12 46,3 46,3 38" stroke-dasharray="15 69" /></symbol>
+                <symbol id="spark-2"><polyline points="29 54,3 54" stroke-dasharray="15 69" /></symbol>
+                <symbol id="spark-3"><polyline points="12 54,12 62,3 62,3 70" stroke-dasharray="15 69" /></symbol>
+                <symbol id="spark-4"><polyline points="28 20,28 12,20 12,20 3" stroke-dasharray="15 105" /></symbol>
+                <symbol id="spark-5"><polyline points="37 29,37 20,3 20,3 3" stroke-dasharray="15 105" /></symbol>
+                <symbol id="spark-6"><polyline points="15 20,15 30,3 30" stroke-dasharray="15 105" /></symbol>
+                <symbol id="spark-7"><polyline points="54 12,37 12,37 3" stroke-dasharray="15 71" /></symbol>
+                <symbol id="spark-8"><polyline points="54 29,54 3" stroke-dasharray="15 71" /></symbol>
+                <symbol id="spark-9"><polyline points="54 12,71 12,71 3" stroke-dasharray="15 71" /></symbol>
+                <symbol id="wave"><rect x="3" y="3" rx="2.5" ry="2.5" width="44" height="44" /></symbol>
+                <g transform="translate(10,10)">
+                    <g class="microchip__lines" stroke-linecap="round" stroke-linejoin="round">
+                        <g>
+                            <g fill="none" stroke="currentcolor">
+                                <use class="microchip__line microchip__line--1" href="#line-1" />
+                                <use class="microchip__spark microchip__spark--1" href="#spark-1" />
+                                <use class="microchip__line microchip__line--2" href="#line-2" />
+                                <use class="microchip__spark microchip__spark--2" href="#spark-2" />
+                                <use class="microchip__line microchip__line--3" href="#line-3" />
+                                <use class="microchip__spark microchip__spark--3" href="#spark-3" />
+                            </g>
+                            <g fill="currentcolor">
+                                <use class="microchip__dot microchip__dot--1" href="#dot-1" />
+                                <use class="microchip__dot microchip__dot--2" href="#dot-2" />
+                                <use class="microchip__dot microchip__dot--3" href="#dot-3" />
+                            </g>
+                        </g>
+                        <g>
+                            <g fill="none" stroke="currentcolor">
+                                <use class="microchip__line microchip__line--4" href="#line-4" />
+                                <use class="microchip__spark microchip__spark--4" href="#spark-4" />
+                                <use class="microchip__line microchip__line--5" href="#line-5" />
+                                <use class="microchip__spark microchip__spark--5" href="#spark-5" />
+                                <use class="microchip__line microchip__line--6" href="#line-6" />
+                                <use class="microchip__spark microchip__spark--6" href="#spark-6" />
+                            </g>
+                            <g fill="currentcolor">
+                                <use class="microchip__dot microchip__dot--4" href="#dot-4" />
+                                <use class="microchip__dot microchip__dot--5" href="#dot-5" />
+                                <use class="microchip__dot microchip__dot--6" href="#dot-6" />
+                            </g>
+                        </g>
+                        <g>
+                            <g fill="none" stroke="currentcolor">
+                                <use class="microchip__line microchip__line--7" href="#line-7" />
+                                <use class="microchip__spark microchip__spark--7" href="#spark-7" />
+                                <use class="microchip__line microchip__line--8" href="#line-8" />
+                                <use class="microchip__spark microchip__spark--8" href="#spark-8" />
+                                <use class="microchip__line microchip__line--9" href="#line-9" />
+                                <use class="microchip__spark microchip__spark--9" href="#spark-9" />
+                            </g>
+                            <g fill="currentcolor">
+                                <use class="microchip__dot microchip__dot--7" href="#dot-7" />
+                                <use class="microchip__dot microchip__dot--8" href="#dot-8" />
+                                <use class="microchip__dot microchip__dot--9" href="#dot-9" />
+                            </g>
+                        </g>
+                        <g transform="translate(108,0) scale(-1,1)">
+                            <g fill="none" stroke="currentcolor">
+                                <use class="microchip__line microchip__line--4" href="#line-4" />
+                                <use class="microchip__spark microchip__spark--4" href="#spark-4" />
+                                <use class="microchip__line microchip__line--5" href="#line-5" />
+                                <use class="microchip__spark microchip__spark--5" href="#spark-5" />
+                                <use class="microchip__line microchip__line--6" href="#line-6" />
+                                <use class="microchip__spark microchip__spark--6" href="#spark-6" />
+                            </g>
+                            <g fill="currentcolor">
+                                <use class="microchip__dot microchip__dot--4" href="#dot-4" />
+                                <use class="microchip__dot microchip__dot--5" href="#dot-5" />
+                                <use class="microchip__dot microchip__dot--6" href="#dot-6" />
+                            </g>
+                        </g>
+                        <g transform="translate(108,0) scale(-1,1)">
+                            <g fill="none" stroke="currentcolor">
+                                <use class="microchip__line microchip__line--1" href="#line-1" />
+                                <use class="microchip__spark microchip__spark--1" href="#spark-1" />
+                                <use class="microchip__line microchip__line--2" href="#line-2" />
+                                <use class="microchip__spark microchip__spark--2" href="#spark-2" />
+                                <use class="microchip__line microchip__line--3" href="#line-3" />
+                                <use class="microchip__spark microchip__spark--3" href="#spark-3" />
+                            </g>
+                            <g fill="currentcolor">
+                                <use class="microchip__dot microchip__dot--1" href="#dot-1" />
+                                <use class="microchip__dot microchip__dot--2" href="#dot-2" />
+                                <use class="microchip__dot microchip__dot--3" href="#dot-3" />
+                            </g>
+                        </g>
+                        <g transform="translate(108,108) scale(-1,-1)">
+                            <g fill="none" stroke="currentcolor">
+                                <use class="microchip__line microchip__line--4" href="#line-4" />
+                                <use class="microchip__spark microchip__spark--4" href="#spark-4" />
+                                <use class="microchip__line microchip__line--5" href="#line-5" />
+                                <use class="microchip__spark microchip__spark--5" href="#spark-5" />
+                                <use class="microchip__line microchip__line--6" href="#line-6" />
+                                <use class="microchip__spark microchip__spark--6" href="#spark-6" />
+                            </g>
+                            <g fill="currentcolor">
+                                <use class="microchip__dot microchip__dot--4" href="#dot-4" />
+                                <use class="microchip__dot microchip__dot--5" href="#dot-5" />
+                                <use class="microchip__dot microchip__dot--6" href="#dot-6" />
+                            </g>
+                        </g>
+                        <g transform="translate(0,108) scale(1,-1)">
+                            <g fill="none" stroke="currentcolor">
+                                <use class="microchip__line microchip__line--7" href="#line-7" />
+                                <use class="microchip__spark microchip__spark--7" href="#spark-7" />
+                                <use class="microchip__line microchip__line--8" href="#line-8" />
+                                <use class="microchip__spark microchip__spark--8" href="#spark-8" />
+                                <use class="microchip__line microchip__line--9" href="#line-9" />
+                                <use class="microchip__spark microchip__spark--9" href="#spark-9" />
+                            </g>
+                            <g fill="currentcolor">
+                                <use class="microchip__dot microchip__dot--7" href="#dot-7" />
+                                <use class="microchip__dot microchip__dot--8" href="#dot-8" />
+                                <use class="microchip__dot microchip__dot--9" href="#dot-9" />
+                            </g>
+                        </g>
+                        <g transform="translate(0,108) scale(1,-1)">
+                            <g fill="none" stroke="currentcolor">
+                                <use class="microchip__line microchip__line--4" href="#line-4" />
+                                <use class="microchip__spark microchip__spark--4" href="#spark-4" />
+                                <use class="microchip__line microchip__line--5" href="#line-5" />
+                                <use class="microchip__spark microchip__spark--5" href="#spark-5" />
+                                <use class="microchip__line microchip__line--6" href="#line-6" />
+                                <use class="microchip__spark microchip__spark--6" href="#spark-6" />
+                            </g>
+                            <g fill="currentcolor">
+                                <use class="microchip__dot microchip__dot--4" href="#dot-4" />
+                                <use class="microchip__dot microchip__dot--5" href="#dot-5" />
+                                <use class="microchip__dot microchip__dot--6" href="#dot-6" />
+                            </g>
+                        </g>
+                    </g>
+                    <g transform="translate(29,29)">
+                        <g class="microchip__center">
+                            <g fill="none" stroke="currentcolor" stroke-width="6">
+                                <use class="microchip__wave microchip__wave--1" href="#wave" />
+                                <use class="microchip__wave microchip__wave--2" href="#wave" />
+                            </g>
+                            <rect class="microchip__core" fill="currentcolor" rx="5" ry="5" width="50" height="50" />
+                        </g>
+                    </g>
+                </g>
+            </svg>
+        </div>
+        <div class="result-status">Analyzing Compliance...</div>
+        <div id="aiSummaryContainer" style="width:100%; margin-top:1.5rem;">
+            <button class="ai-explain-btn" onclick="getAIComplianceSummary()">✨ Get AI Explanation</button>
+            <div id="aiSummaryDisplay" style="margin-top:1rem;"></div>
+        </div>`;
+            
+            setTimeout(() => {
+                const rule = findComplianceRule(providerJurisdiction, clientJurisdiction, service);
+                displayResult(rule, clientJurisdiction, providerJurisdiction, service);
+                // Store context for AI explanation
+                currentAnalysisContext = {
+                    provider: providerJurisdiction,
+                    client: clientJurisdiction,
+                    service: service,
+                    requirementsText: rule.requirements,
+                    status: rule.status
+                };
+            }, 1500);
+        }
+
+        function findComplianceRule(providerJurisdiction, clientJurisdiction, service) {
+            const providerZone = determineZone(providerJurisdiction, service)?.toLowerCase();
+            const clientZone = determineZone(clientJurisdiction, service)?.toLowerCase();
+            
+            // Define the new compliance matrix
+            const complianceMatrix = {
+                'green': { 'green': 'allowed', 'blue': 'semi-allowed', 'red': 'conditional' },
+                'blue':  { 'green': 'allowed', 'blue': 'semi-allowed', 'red': 'conditional' },
+                'red':   { 'green': 'allowed', 'blue': 'semi-allowed', 'red': 'conditional' }
+            };
+
+            // Default to conditional if zones aren't found
+            if (!providerZone || !clientZone || !complianceMatrix[providerZone]?.[clientZone]) {
+                return {
+                    status: 'conditional',
+                    requirements: `No specific rule found for ${providerZone || 'unknown'} to ${clientZone || 'unknown'}. <a href="https://docs.google.com/spreadsheets/d/1TBDm2kx8WxqPr4bTYtKOtWdFt3DkYyHrIsCVuPBW2rQ/edit?usp=sharing" target="_blank" style="color: var(--primary); text-decoration: underline;">General compliance conditions apply</a>.`,
+                    colorCode: `${providerZone}-${clientZone}`,
+                    updated: getCurrentDate()
+                };
+            }
+
+            const status = complianceMatrix[providerZone][clientZone];
+            let requirements = '';
+            
+            // Customize requirements based on status
+            switch(status) {
+                case 'allowed':
+                    requirements = 'Service is generally allowed. Standard terms and conditions apply.';
+                    break;
+                case 'semi-allowed':
+                    requirements = 'Service may be allowed with additional conditions. ';
+                    if (clientZone === 'blue') {
+                        requirements += 'Please verify specific Blue zone requirements for the client jurisdiction.';
+                    }
+                    break;
+                case 'conditional':
+                    requirements = 'Service is conditionally allowed and may require additional verification. ';
+                    if (clientZone === 'red') {
+                        requirements += 'A local license in the client\'s Red zone may be required.';
+                    }
+                    break;
+            }
+
+            return {
+                status: status,
+                requirements: requirements,
+                colorCode: `${providerZone}-${clientZone}`,
+                updated: getCurrentDate()
+            };
+        }
+        function determineZone(jurisdictionName, service) {
+            const countryData = complianceData.countries[jurisdictionName];
+            if (!countryData) return 'unknown';
+            
+            // Map service type to the appropriate data field
+            const serviceMapping = {
+                'counselling': 'counselling',
+                'counselling-psychology': 'counsellingPsychology',
+                'clinical': 'clinical'
+            };
+            
+            const serviceField = serviceMapping[service];
+            
+            // Check if colorCode is an object with service-specific values
+            if (countryData.colorCode && typeof countryData.colorCode === 'object') {
+                const serviceColorCode = countryData.colorCode[service] || countryData.colorCode[serviceField];
+                if (serviceColorCode) {
+                    return serviceColorCode.toLowerCase();
+                }
+                return 'varies';
+            }
+            
+            // If colorCode is a simple string, return it
+            if (countryData.colorCode && typeof countryData.colorCode === 'string') {
+                return countryData.colorCode.toLowerCase();
+            }
+            
+            return 'unknown';
+        }
+
+        function displayResult(rule, clientJurisdiction, providerJurisdiction, service) {
+            const resultDisplay = document.getElementById('resultDisplay');
+            if(!resultDisplay) return;
+
+            const clientCountryInfo = complianceData.countries[clientJurisdiction] || { flag: getFlagForJurisdiction(clientJurisdiction), name: clientJurisdiction };
+            const providerCountryInfo = complianceData.countries[providerJurisdiction] || { flag: getFlagForJurisdiction(providerJurisdiction), name: providerJurisdiction };
+
+            // Determine if this is a Blue zone combination that should show as 'Semi Allowed'
+            const providerZone = determineZone(providerJurisdiction, service)?.toLowerCase();
+            const clientZone = determineZone(clientJurisdiction, service)?.toLowerCase();
+            const isSemiAllowedCase = (clientZone === 'blue' && ['red', 'blue', 'green'].includes(providerZone));
+            
+            const statusConfig = {
+                'allowed': { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`, color: 'var(--success)', title: 'Service Permitted' },
+                'semi-allowed': { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`, color: 'var(--primary)', title: 'Semi Allowed' },
+                'conditional': { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`, color: 'var(--danger)', title: 'Conditionally Allowed' },
+                'denied': { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`, color: 'var(--danger)', title: 'Not Permitted' }
+            };
+            
+            // Override status for semi-allowed cases
+            const effectiveStatus = isSemiAllowedCase ? 'semi-allowed' : (rule.status || 'conditional'); 
+            
+            const config = statusConfig[effectiveStatus] || statusConfig['conditional']; 
+            
+            let aiSummaryHTML = `<div id="aiSummaryContainer" style="width:100%; margin-top:1.5rem;">
+                                     <button class="ai-explain-btn" onclick="getAIComplianceSummary()">✨ Get AI Explanation</button>
+                                     <div id="aiSummaryDisplay" style="margin-top:1rem;"></div>
+                                 </div>`;
+
+            resultDisplay.innerHTML = `
+                <div class="result-icon">${config.icon}</div>
+                <div class="result-status" style="color: ${config.color};">${config.title}</div>
+                <div class="result-message">${(rule.requirements || 'N/A').replace(/\n/g, '<br>')}</div>
+                <div class="result-details">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                        <span style="color: var(--text-muted);">Route</span>
+                        <span>${providerCountryInfo.flag} ${providerJurisdiction} → ${clientCountryInfo.flag} ${clientJurisdiction}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                        <span style="color: var(--text-muted);">Service</span>
+                        <span>${service.charAt(0).toUpperCase() + service.slice(1).replace(/-/g, ' ')}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                        <span style="color: var(--text-muted);">Compliance Zone</span>
+                        <span style='text-align:right;'>${
+                            rule.colorCode.includes('unknown') || rule.colorCode.includes('varies')
+                                ? (rule.colorCode.includes('unknown')
+                                    ? `NO COLOR CODE – CHECK REGULATIONS:<br><span style='font-size:0.9em;color:var(--text-muted)'>Provider: ${getJurisdictionRegInfo(providerJurisdiction, service)}<br>Client: ${getJurisdictionRegInfo(clientJurisdiction, service)}</span>`
+                                    : 'VARIES BY JURISDICTION')
+                                : (typeof rule.colorCode === 'string' ? rule.colorCode.toUpperCase() : 'VARIES')
+                        }</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-muted);">Last Updated</span>
+                        <span>${rule.updated || getCurrentDate()}</span>
+                    </div>
+                </div>
+                ${aiSummaryHTML} 
+                <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                    ${complianceData.countries[providerJurisdiction] ? `<button class="filter-btn" onclick="showCountryDetails('${providerJurisdiction}')">View ${providerJurisdiction} Details</button>` : ''}
+                    ${complianceData.countries[clientJurisdiction] ? `<button class="filter-btn" onclick="showCountryDetails('${clientJurisdiction}')">View ${clientJurisdiction} Details</button>` : ''}
+                    ${(!complianceData.countries[providerJurisdiction] && !complianceData.countries[clientJurisdiction]) || (providerJurisdiction === clientJurisdiction && !complianceData.countries[providerJurisdiction]) ? `<button class="filter-btn" onclick="showSection(event, 'countries')">Browse Jurisdictions</button>` : ''}
+                </div>`;
+        }
+
+
+
+        // --- COUNTRY DATABASE ---
+        function populateCountries() {
+            const grid = document.getElementById('countriesGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            
+            const allDisplayableJurisdictions = [];
+            Object.values(complianceData.countries).forEach(country => { 
+                allDisplayableJurisdictions.push({
+                    name: country.name, region: country.region, hasDetailedData: true, data: country
+                });
+            });
+            
+            Object.entries(complianceData.jurisdictions).forEach(([region, regionJurisdictions]) => {
+                 if (Array.isArray(regionJurisdictions)) { 
+                    regionJurisdictions.forEach(jurisdictionName => {
+                        if (!allDisplayableJurisdictions.some(j => j.name === jurisdictionName)) {
+                            allDisplayableJurisdictions.push({ name: jurisdictionName, region: region, hasDetailedData: false, data: null });
+                        }
+                    });
+                }
+            });
+
+            allDisplayableJurisdictions.sort((a, b) => {
+                const regionCompare = (a.region || "").localeCompare(b.region || "");
+                if (regionCompare !== 0) return regionCompare;
+                return (a.name || "").localeCompare(b.name || "");
+            });
+            
+            let currentRegion = '';
+            allDisplayableJurisdictions.forEach(jurisdiction => {
+                if (jurisdiction.region !== currentRegion) {
+                    currentRegion = jurisdiction.region;
+                    const regionHeader = document.createElement('div');
+                    regionHeader.style.gridColumn = '1 / -1'; 
+                    regionHeader.style.marginTop = '2rem';
+                    regionHeader.style.marginBottom = '1rem';
+                    const regionJurisdictionCount = complianceData.jurisdictions[currentRegion] ? complianceData.jurisdictions[currentRegion].length : 0;
+                    regionHeader.innerHTML = `<h2 style="font-size: 1.75rem; font-weight: 700; color: var(--primary);">${currentRegion}<span style="font-size: 1rem; color: var(--text-muted); font-weight: 500; margin-left: 1rem;">${regionJurisdictionCount} jurisdictions</span></h2>`;
+                    grid.appendChild(regionHeader);
+                }
+                
+                const card = document.createElement('div');
+                card.className = 'country-card glass-card';
+                const countryData = jurisdiction.data; 
+
+                if (countryData) { 
+                    card.onclick = () => showCountryDetails(countryData.name);
+                    card.innerHTML = `
+                        <div class="country-header">
+                            <div class="country-flag">${countryData.flag || getFlagForJurisdiction(countryData.name)}</div>
+                            <div style="flex: 1;">
+                                <div class="country-name">${countryData.name}</div>
+                                <div class="country-meta">
+                                    <span>Regulatory: ${countryData.regulatory || 'N/A'}</span>
+                                    <span>Zone: ${typeof countryData.colorCode === 'string' ? countryData.colorCode.toUpperCase() : (typeof countryData.colorCode === 'object' ? 'VARIES (Service Specific)' : 'VARIES')}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="country-card-body">
+                            <div style="display: grid; gap: 0.5rem; font-size: 0.875rem;">
+                                <div><span style="color: ${countryData.counselling?.regulated ? 'var(--warning)' : 'var(--success)'}; margin-right: 0.5em;">●</span> Counselling: ${countryData.counselling?.regulated ? 'Regulated' : 'Unregulated'}</div>
+                                <div><span style="color: ${countryData.psychology?.regulated ? 'var(--danger)' : 'var(--success)'}; margin-right: 0.5em;">●</span> Psychology: ${countryData.psychology?.regulated ? 'Regulated' : 'Unregulated'}</div>
+                                <div><span style="color: ${countryData.clinical?.regulated ? 'var(--danger)' : 'var(--success)'}; margin-right: 0.5em;">●</span> Clinical: ${countryData.clinical?.regulated ? 'Regulated' : 'Unregulated'}</div>
+                            </div>
+                            <div class="country-card-footer">
+                                <span>View Details</span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
+                            </div>
+                        </div>`;
+                } else { 
+                     const flagForBasic = getFlagForJurisdiction(jurisdiction.name);
+                    card.innerHTML = `
+                        <div class="country-header">
+                             <div class="country-flag">${flagForBasic}</div>
+                            <div style="flex: 1;">
+                                <div class="country-name">${jurisdiction.name}</div>
+                                <div class="country-meta"><span>Region: ${jurisdiction.region}</span></div>
+                            </div>
+                        </div>
+                         <div class="country-card-body">
+                            <div style="margin-top: 1rem; padding: 1rem; background: var(--darker); border-radius: 8px; text-align: center;">
+                                <p style="font-size: 0.875rem; color: var(--text-muted);">Full regulatory data pending.</p>
+                            </div>
+                            <div class="country-card-footer" style="justify-content: center; color: var(--text-muted); font-size: 0.875rem;">
+                                <span>Details in development</span>
+                            </div>
+                        </div>`;
+                }
+                grid.appendChild(card);
+            });
+
+            const summaryCard = document.createElement('div');
+            summaryCard.className = 'glass-card';
+            summaryCard.style.gridColumn = '1 / -1';
+            summaryCard.style.marginTop = '3rem';
+            summaryCard.style.background = 'var(--gradient-1)';
+            summaryCard.style.color = 'white';
+            summaryCard.innerHTML = `
+                <div style="text-align: center;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">iCompliance Coverage</h3>
+                    <div style="display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap;">
+                        <div><div id="jurisdictionCountSummary" style="font-size: 3rem; font-weight: 700;">0</div><div style="opacity: 0.9;">Total Jurisdictions</div></div>
+                        <div><div id="regionCountSummary" style="font-size: 3rem; font-weight: 700;">0</div><div style="opacity: 0.9;">Regions Covered</div></div>
+                        <div><div style="font-size: 3rem; font-weight: 700;">${complianceData.jobRoles.length}</div><div style="opacity: 0.9;">Role Types</div></div>
+                    </div>
+                </div>`;
+            grid.appendChild(summaryCard);
+            updateSummaryCounts(); 
+        }
+        
+        function updateSummaryCounts() {
+            // Unique countries/jurisdictions
+            const totalJurisdictions = Object.keys(complianceData.countries).length;
+            // Supported service types (always 3)
+            const totalServiceTypes = 3;
+            // Number of regions
+            const totalRegions = Object.keys(complianceData.jurisdictions).length;
+
+            const jurCountHero = document.getElementById('jurisdictionCountHero');
+            const serviceTypeCountHero = document.getElementById('serviceTypeCountHero');
+            const regCountHero = document.getElementById('regionCountHero');
+            const jurCountSummary = document.getElementById('jurisdictionCountSummary');
+            const serviceTypeCountSummary = document.getElementById('serviceTypeCountSummary');
+            const regCountSummary = document.getElementById('regionCountSummary');
+
+            if (jurCountHero) jurCountHero.textContent = totalJurisdictions;
+            if (serviceTypeCountHero) serviceTypeCountHero.textContent = totalServiceTypes;
+            if (regCountHero) regCountHero.textContent = totalRegions;
+            if (jurCountSummary) jurCountSummary.textContent = totalJurisdictions;
+            if (serviceTypeCountSummary) serviceTypeCountSummary.textContent = totalServiceTypes;
+            if (regCountSummary) regCountSummary.textContent = totalRegions;
+        }
+
+
+        // --- MODAL (COUNTRY DETAILS) ---
+        // Make function globally accessible for button click handlers
+        window.showCountryDetails = function(countryName) {
+            const country = complianceData.countries[countryName];
+            if (!country) {
+                showNotification('Detailed requirements for ' + countryName + ' are being updated.', 'info');
+                return;
+            }
+            
+            const modal = document.getElementById('modalOverlay');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+
+            if (!modal || !modalTitle || !modalBody) return;
+            
+            modalTitle.innerHTML = `${country.flag || getFlagForJurisdiction(country.name)} ${country.name} - Regulatory Framework`;
+            
+            modalBody.innerHTML = `
+                <div class="requirements-grid">
+                    <div class="requirement-card">
+                        <div class="requirement-title">Counselling</div>
+                        <div class="requirement-content">
+                            <p><strong>Regulated:</strong> ${country.counselling?.regulated ? 'Yes' : 'No'}</p>
+                            <p><strong>Requirements:</strong> ${(country.counselling?.requirements || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p><strong>Training:</strong> ${(country.counselling?.training || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p><strong>Renewal:</strong> ${(country.counselling?.renewal || 'N/A').replace(/\n/g, '<br>')}</p>
+                        </div>
+                    </div>
+                    <div class="requirement-card">
+                        <div class="requirement-title">Counselling Psychology</div>
+                        <div class="requirement-content">
+                            <p><strong>Regulated:</strong> ${country.counsellingPsychology?.regulated ? 'Yes' : 'No'}</p>
+                            <p><strong>Requirements:</strong> ${(country.counsellingPsychology?.requirements || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p><strong>Training:</strong> ${(country.counsellingPsychology?.training || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p><strong>Renewal:</strong> ${(country.counsellingPsychology?.renewal || 'N/A').replace(/\n/g, '<br>')}</p>
+                        </div>
+                    </div>
+                    <div class="requirement-card">
+                        <div class="requirement-title">Clinical Psychology</div>
+                        <div class="requirement-content">
+                            <p><strong>Regulated:</strong> ${country.clinical?.regulated ? 'Yes' : 'No'}</p>
+                            <p><strong>Requirements:</strong> ${(country.clinical?.requirements || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p><strong>Training:</strong> ${(country.clinical?.training || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p><strong>Renewal:</strong> ${(country.clinical?.renewal || 'N/A').replace(/\n/g, '<br>')}</p>
+                        </div>
+                    </div>
+                    <div class="requirement-card">
+                        <div class="requirement-title">Cross-Border Services</div>
+                        <div class="requirement-content">
+                            <p><strong>Inbound:</strong> ${(country.crossBorder?.inbound || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p><strong>Outbound:</strong> ${(country.crossBorder?.outbound || 'N/A').replace(/\n/g, '<br>')}</p>
+                        </div>
+                    </div>
+                    <div class="requirement-card" style="grid-column: 1/-1;">
+                        <div class="requirement-title">Additional Notes</div>
+                        <div class="requirement-content">
+                            <p>${(country.notes || 'N/A').replace(/\n/g, '<br>')}</p>
+                            <p style="margin-top: 1rem;"><strong>Primary Regulatory Body:</strong> ${formatRegulatoryInfo(country.regulatory)}</p>
+                            <p style="margin-top: 0.5rem;"><strong>Compliance Zone:</strong> ${typeof country.colorCode === 'string' ? country.colorCode.toUpperCase() : (typeof country.colorCode === 'object' ? 'VARIES (Service Specific)' : 'VARIES')}</p>
+                        </div>
+                    </div>
+                </div>`;
+            modal.classList.add('active');
+        }
+
+        function closeModal(event) {
+            if (!event || event.target === event.currentTarget || event.target.closest('.modal-close')) {
+                 const modalOverlay = document.getElementById('modalOverlay');
+                 if (modalOverlay) modalOverlay.classList.remove('active');
+            }
+        }
+
+
+        // --- NOTIFICATION SYSTEM ---
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            let bgColor;
+            switch(type) {
+                case 'error': bgColor = 'var(--danger)'; break;
+                case 'success': bgColor = 'var(--success)'; break;
+                default: bgColor = 'var(--primary)';
+            }
+            notification.style.cssText = `
+                position: fixed; top: 100px; right: 20px;
+                padding: 1.5rem 2rem; background: ${bgColor}; color: white;
+                border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                z-index: 3000; animation: slideInRight 0.3s ease-out; max-width: 400px;
+            `;
+            notification.innerHTML = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease-out forwards';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        const notificationAnimationStyle = document.createElement('style');
+        notificationAnimationStyle.textContent = `
+            @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+            @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+        `;
+        document.head.appendChild(notificationAnimationStyle);
+        
+        function getFlagForJurisdiction(jurisdictionName) {
+            // First try direct lookup
+            const countryData = complianceData.countries[jurisdictionName];
+            if (countryData && countryData.flag) {
+                return countryData.flag;
+            }
+            
+            // If country name has special characters or formatting differences, try to match
+            const normalizedName = jurisdictionName.toLowerCase().replace(/[&\s-]+/g, '').replace(/[,\.]/g, '');
+            
+            for (const [country, data] of Object.entries(complianceData.countries)) {
+                const normalizedCountry = country.toLowerCase().replace(/[&\s-]+/g, '').replace(/[,\.]/g, '');
+                if (normalizedCountry === normalizedName && data.flag) {
+                    return data.flag;
+                }
+            }
+            
+            // Check if it's a state format (State, Country)
+            if (jurisdictionName.includes(',')) {
+                const countryPart = jurisdictionName.split(',')[1].trim();
+                return getFlagForJurisdiction(countryPart); // Recursive call for the country part
+            }
+            
+            return '🌐'; // Default if no match found
+        }
+
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile Navigation Menu Toggle
+            const menuToggle = document.getElementById('menuToggle');
+            const navMenu = document.getElementById('navMenu');
+            
+            if (menuToggle && navMenu) {
+                menuToggle.addEventListener('click', function() {
+                    menuToggle.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                });
+            }
+            populateJurisdictionDropdowns();
+            updateSummaryCounts();
+            const firstNavItem = document.querySelector('.nav-item');
+            if(firstNavItem) {
+                const sectionIdMatch = firstNavItem.getAttribute('onclick').match(/'([^']+)'/);
+                if (sectionIdMatch && sectionIdMatch[1]) {
+                    showSection({currentTarget: firstNavItem}, sectionIdMatch[1]);
+                }
+            }
+            document.querySelectorAll('#calculator .fade-in, #calculator .slide-up').forEach((el, i) => {
+                el.style.animationDelay = `${i * 0.1}s`;
+            });
+        });
+
+        function mapJobRoleToServiceType(jobRole) {
+            switch (jobRole) {
+                case 'Counsellor': return 'counselling';
+                case 'Counselling Psychologist': return 'counselling-psychology';
+                case 'Clinical Psychologist': return 'clinical';
+                default:
+                    console.warn(`Unsupported or unknown job role: ${jobRole}. This tool now supports: Counsellor, Counselling Psychologist, Clinical Psychologist.`);
+                    return 'unsupported_service'; // Or a generic term like 'pending_service'
+            }
+        }
+
+        function populateJurisdictionDropdowns() {
+            const clientDatalist = document.getElementById('clientCountries');
+            const providerDatalist = document.getElementById('providerCountries');
+            
+            // Clear existing options
+            clientDatalist.innerHTML = '';
+            providerDatalist.innerHTML = '';
+            
+            // Get the sorted regions
+            const sortedRegions = Object.keys(complianceData.jurisdictions).sort();
+            
+            // For each region, add region and its countries
+            sortedRegions.forEach(region => {
+                // Add the region as an option
+                const regionOption1 = document.createElement('option');
+                regionOption1.value = region;
+                regionOption1.textContent = `🌐 ${region}`;
+                clientDatalist.appendChild(regionOption1);
+                
+                const regionOption2 = regionOption1.cloneNode(true);
+                providerDatalist.appendChild(regionOption2);
+                
+                // Add all countries in the region
+                const countriesInRegion = complianceData.jurisdictions[region];
+                if (Array.isArray(countriesInRegion)) {
+                    // Sort countries alphabetically
+                    const sortedCountries = [...countriesInRegion].sort();
+                    
+                    sortedCountries.forEach(countryName => {
+                        const flag = getFlagForJurisdiction(countryName);
+                        
+                        // Add to client dropdown
+                        const countryOption1 = document.createElement('option');
+                        countryOption1.value = countryName;
+                        countryOption1.textContent = `${flag} ${countryName}`;
+                        clientDatalist.appendChild(countryOption1);
+                        
+                        // Add to provider dropdown
+                        const countryOption2 = countryOption1.cloneNode(true);
+                        providerDatalist.appendChild(countryOption2);
+                        
+                        // Handle states/provinces if they exist
+                        const countryData = complianceData.countries[countryName];
+                        if (countryData && countryData.states) {
+                            const stateNames = Object.keys(countryData.states).sort();
+                            stateNames.forEach(stateName => {
+                                const fullName = `${stateName}, ${countryName}`;
+                                
+                                // Add to client dropdown
+                                const stateOption1 = document.createElement('option');
+                                stateOption1.value = fullName;
+                                stateOption1.textContent = `${flag} ${fullName}`;
+                                clientDatalist.appendChild(stateOption1);
+                                
+                                // Add to provider dropdown
+                                const stateOption2 = stateOption1.cloneNode(true);
+                                providerDatalist.appendChild(stateOption2);
+                            });
+                        }
+                    });
+                }
+            });
+            
+            // Update the counts in the UI
+            updateSummaryCounts();
+        }
+    </script>
+    <footer style="text-align: center; margin-top: 50px; font-size: 0.9em; padding: 20px;">
+        2025 Intellect (Prototype by Legal Team - Intellect). All rights reserved. For internal review only.
+    </footer>
+    
+    <div style="position: fixed; bottom: 10px; right: 10px; font-size: 0.85em; color: #666;">
+        Powered by Intellect Legal Team
+    </div>
+    <script src="navigation.js"></script>
+</body>
+</html>

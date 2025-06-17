@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iCompliance | Compliance Matrix</title>
+    <!-- Navigation CSS -->
+    <link rel="stylesheet" href="navigation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <style>
+        :root {
+            --primary: #2d9cdb;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f0f10;
+            --darker: #050506;
+            --card: #18181b;
+            --border: #27272a;
+            --text: #fafafa;
+            --text-muted: #a1a1aa;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-ai: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-hover: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Enhanced Universe Background with animated stars */
+        .universe-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: radial-gradient(ellipse at bottom, #1b1b2f 0%, #050506 100%);
+            overflow: hidden;
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, #ddd, transparent),
+                radial-gradient(1px 1px at 50px 160px, #fff, transparent);
+            background-size: 200px 200px;
+            animation: moveStars 100s linear infinite;
+        }
+
+        @keyframes moveStars {
+            from { transform: translateY(0); }
+            to { transform: translateY(-200px); }
+        }
+
+        /* Main Content */
+        main {
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Enhanced Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0 3rem 0;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            animation: textGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes textGlow {
+            0%, 100% { filter: brightness(1) drop-shadow(0 0 20px rgba(102, 126, 234, 0.5)); }
+            50% { filter: brightness(1.2) drop-shadow(0 0 30px rgba(102, 126, 234, 0.7)); }
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            line-height: 1.7;
+            animation: fadeIn 1s ease 0.3s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Enhanced Table Wrapper */
+        .matrix-table-wrapper {
+            background: var(--card);
+            border-radius: 24px;
+            overflow: hidden;
+            padding: 0;
+            border: 1px solid var(--border);
+            margin-top: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s ease 0.5s both;
+            position: relative;
+        }
+
+        .matrix-table-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-1);
+            opacity: 0.5;
+        }
+
+        /* Enhanced Table */
+        .matrix-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 900px;
+        }
+
+        .matrix-table th,
+        .matrix-table td {
+            padding: 1.5rem;
+            text-align: left;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .matrix-table tbody tr {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .matrix-table tbody tr:hover {
+            background: rgba(99, 102, 241, 0.05);
+            transform: scale(1.01);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+        
+        .matrix-table th {
+            background: rgba(5, 5, 6, 0.5);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .matrix-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Enhanced Zone Labels */
+        .zone-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .zone-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            position: relative;
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .zone-dot::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 50%;
+            border: 2px solid currentColor;
+            opacity: 0.3;
+            animation: ripple 2s ease-in-out infinite;
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .zone-dot.green { 
+            background-color: var(--success); 
+            box-shadow: 0 0 20px var(--success);
+            color: var(--success);
+        }
+        .zone-dot.blue { 
+            background-color: var(--primary); 
+            box-shadow: 0 0 20px var(--primary);
+            color: var(--primary);
+        }
+        .zone-dot.red { 
+            background-color: var(--danger); 
+            box-shadow: 0 0 20px var(--danger);
+            color: var(--danger);
+        }
+
+        /* Enhanced Status Cell */
+        .status-cell {
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .status-cell i {
+            font-size: 1.2rem;
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .status-cell.allowed { color: var(--success); }
+        .status-cell.semi-allowed { color: var(--primary); }
+        .status-cell.conditional { color: var(--danger); }
+        .status-cell.denied { color: var(--danger); }
+        
+        .notes-cell {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            white-space: normal;
+            max-width: 400px;
+        }
+        
+        /* Enhanced AI Button */
+        .ai-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-ai);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .ai-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .ai-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .ai-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+            background: var(--gradient-hover);
+        }
+
+        .ai-btn:active {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .ai-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Enhanced Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            transform: scale(0.9) translateY(50px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-ai);
+        }
+
+        .modal-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(24, 24, 27, 0.5);
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .modal-header h2 {
+            font-size: 1.75rem;
+            color: var(--text);
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-close {
+            background: var(--dark);
+            border: 1px solid var(--border);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+        }
+
+        .modal-close:hover {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: white;
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+            line-height: 1.8;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .modal-body h3 {
+            color: var(--primary);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-body h3::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--gradient-1);
+            border-radius: 2px;
+        }
+
+        .modal-body ul {
+            list-style: none;
+            padding-left: 1rem;
+        }
+
+        .modal-body li {
+            margin-bottom: 0.75rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .modal-body li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .modal-body p {
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        .modal-body blockquote {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            font-style: italic;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border);
+            background-color: rgba(24, 24, 27, 0.5);
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Enhanced Loading Spinner */
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 3rem auto;
+            box-shadow: 0 0 20px rgba(45, 156, 219, 0.5);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Enhanced Footer */
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding: 3rem 2rem;
+            background: var(--dark);
+            border-top: 1px solid var(--border);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .matrix-table-wrapper {
+                border-radius: 16px;
+                margin: 1rem -1rem;
+                overflow-x: auto;
+            }
+
+            .matrix-table {
+                font-size: 0.875rem;
+            }
+
+            .matrix-table th,
+            .matrix-table td {
+                padding: 1rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
+                max-height: 95vh;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <!-- Background -->
+    <div class="universe-bg">
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <div class="hero">
+                <h1>Compliance Rule Matrix</h1>
+                <p>
+                    This matrix explains the core logic behind the iCompliance calculator.
+                    Permission for cross-border services is determined by a color-coded system representing the regulatory strictness of the <strong>Provider's</strong> and <strong>Client's</strong> jurisdictions.
+                </p>
+            </div>
+
+            <div class="matrix-table-wrapper">
+                <table class="matrix-table">
+                    <thead>
+                        <tr>
+                            <th>Provider Zone</th>
+                            <th>Client Zone</th>
+                            <th>Status</th>
+                            <th>Key Conditions & Notes</th>
+                            <th style="text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matrix-body">
+                        <!-- Rows will be dynamically generated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- AI Modal -->
+    <div class="modal-overlay" id="ai-modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modal-title">✨ AI-Powered Details</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- AI content will be injected here -->
+            </div>
+            <div class="modal-footer" id="modal-footer">
+                <!-- Scenario button will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        © 2025 Intellect (Prototype by Legal Team - Intellect). All rights reserved. For internal review only.
+    </footer>
+
+    <script src="navigation.js"></script>
+
+    <script>
+        const showdownConverter = new showdown.Converter({
+            ghCompatibleHeaderId: true,
+            simpleLineBreaks: true
+        });
+
+        // --- Data for the Matrix ---
+        const matrixRules = [
+            { provider: 'Green', client: 'Green', status: 'Allowed', notes: "Standard practice is permitted with no special cross-border requirements." },
+            { provider: 'Green', client: 'Blue', status: 'Semi-Allowed', notes: "Service may be allowed with additional conditions. Please verify specific Blue zone requirements for the client jurisdiction." },
+            { provider: 'Green', client: 'Red', status: 'Conditional', notes: "Service is conditionally allowed and may require additional verification. A local license in the client's Red zone may be required." },
+            { provider: 'Blue', client: 'Green', status: 'Allowed', notes: "Permitted because the client is in a permissive jurisdiction. The provider must still provide full credential information." },
+            { provider: 'Blue', client: 'Blue', status: 'Semi-Allowed', notes: "Service may be allowed with additional conditions. Please verify specific Blue zone requirements for the client jurisdiction." },
+            { provider: 'Blue', client: 'Red', status: 'Conditional', notes: "Service is conditionally allowed and may require additional verification. A local license in the client's Red zone may be required." },
+            { provider: 'Red', client: 'Green', status: 'Allowed', notes: "Permitted because the client is in a permissive jurisdiction. The provider must still provide full credential information." },
+            { provider: 'Red', client: 'Blue', status: 'Semi-Allowed', notes: "Service may be allowed with additional conditions. Please verify specific Blue zone requirements for the client jurisdiction." },
+            { provider: 'Red', client: 'Red', status: 'Conditional', notes: "Service is conditionally allowed and may require additional verification. A local license in the client's Red zone may be required." }
+        ];
+
+        // --- UI Rendering ---
+        function populateMatrixTable() {
+            const tbody = document.getElementById('matrix-body');
+            tbody.innerHTML = ''; // Clear existing rows
+            
+            matrixRules.forEach((rule, index) => {
+                const row = document.createElement('tr');
+                const statusClass = rule.status.toLowerCase();
+                const iconClass = {
+                    'Allowed': 'fa-check-circle',
+                    'Semi-Allowed': 'fa-exclamation-circle',
+                    'Conditional': 'fa-exclamation-triangle',
+                    'Denied': 'fa-ban'
+                }[rule.status] || 'fa-question-circle';
+
+                row.innerHTML = `
+                    <td><div class="zone-label"><span class="zone-dot ${rule.provider.toLowerCase()}"></span>${rule.provider}</div></td>
+                    <td><div class="zone-label"><span class="zone-dot ${rule.client.toLowerCase()}"></span>${rule.client}</div></td>
+                    <td><div class="status-cell ${statusClass}"><i class="fas ${iconClass}"></i>${rule.status}</div></td>
+                    <td class="notes-cell">${rule.notes}</td>
+                    <td style="text-align: center;">
+                        <button class="ai-btn explain-btn" 
+                                data-provider="${rule.provider}" 
+                                data-client="${rule.client}" 
+                                data-status="${rule.status}" 
+                                data-notes="${rule.notes}">
+                            ✨ Explain
+                        </button>
+                    </td>
+                `;
+                row.style.animationDelay = `${index * 0.1}s`;
+                tbody.appendChild(row);
+            });
+            
+            // Add event listeners after rows are created
+            document.querySelectorAll('.explain-btn').forEach(button => {
+                button.addEventListener('click', handleExplainClick);
+            });
+        }
+
+        // --- Modal & AI Logic ---
+        function openModal() {
+            document.getElementById('ai-modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('ai-modal').classList.remove('active');
+        }
+
+        // Close modal with ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        function handleExplainClick(event) {
+            const button = event.currentTarget;
+            const { provider, client, status, notes } = button.dataset;
+            showRuleExplanation(provider, client, status, notes);
+        }
+        
+        async function callGeminiAPI(prompt) {
+            // Making a direct call to the Gemini API instead of going through a proxy
+            const API_KEY = 'AIzaSyC8YYkX29-4WyWBKWw-Sm6Cm2dATxgvpeA'; // API key
+            const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${API_KEY}`;
+            const modalBody = document.getElementById('modal-body');
+
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+            };
+
+            try {
+                modalBody.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center; color: var(--text-muted);">Generating AI-powered explanation...</p>';
+                console.log('Sending direct request to Gemini API with prompt:', prompt.substring(0, 100) + '...');
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                const bodyAsText = await response.text(); // Read the body ONCE, regardless of status
+
+                if (!response.ok) {
+                    let errorDetailLog = ''; // For detailed logging
+                    let errorDetailUser = ''; // For user-facing message
+
+                    if (bodyAsText && bodyAsText.trim() !== "") {
+                        try {
+                            const errorJson = JSON.parse(bodyAsText);
+                            if (errorJson.error && errorJson.error.message) {
+                                errorDetailLog = errorJson.error.message;
+                                errorDetailUser = errorJson.error.message; // Use specific message if available
+                            } else if (errorJson.message) {
+                                errorDetailLog = errorJson.message;
+                                errorDetailUser = errorJson.message; // Use specific message if available
+                            } else {
+                                // If no specific message field, log the whole JSON for debugging, but give a generic message to user
+                                errorDetailLog = bodyAsText; 
+                                errorDetailUser = "The server returned an error without a specific message.";
+                            }
+                        } catch (parseError) {
+                            // If parsing fails, it means the error response was not JSON.
+                            errorDetailLog = bodyAsText; // Log the raw text
+                            errorDetailUser = "The server returned an error in a non-JSON format.";
+                            console.warn("Could not parse non-OK API response body as JSON. Raw body: " + bodyAsText + " Status: " + response.status, parseError);
+                        }
+                    } else {
+                        errorDetailLog = `Server returned status ${response.status} with an empty response body.`;
+                        errorDetailUser = `The server returned an error with an empty response.`;
+                    }
+                    const errorTextForLog = `API call failed. Status: ${response.status}. Detail: ${errorDetailLog}`;
+                    const errorTextForUser = `Sorry, the AI service isn't available right now (Status: ${response.status}). ${errorDetailUser}`;
+                    console.error("API Error:", errorTextForLog);
+                    return `<p style="color: var(--danger);">${errorTextForUser}</p>`;
+                }
+
+                // If response.ok is true, try to parse the bodyAsText
+                let parsedBody;
+                try {
+                    if (!bodyAsText || bodyAsText.trim() === "") {
+                        console.error('Successful API response, but body is empty.');
+                        return `<p style="color: var(--danger);">Sorry, the AI service returned an empty response. Please try again.</p>`;
+                    }
+                    parsedBody = JSON.parse(bodyAsText);
+                    console.log('API response received and parsed:', parsedBody);
+                } catch (jsonError) {
+                    console.error('Failed to parse successful API response as JSON. Raw body:', bodyAsText, jsonError);
+                    return `<p style="color: var(--danger);">Sorry, there was an error processing the AI's response. It was not in the expected format. Please try again.</p>`;
+                }
+
+                if (parsedBody.candidates && 
+                    parsedBody.candidates[0] && 
+                    parsedBody.candidates[0].content && 
+                    parsedBody.candidates[0].content.parts && 
+                    parsedBody.candidates[0].content.parts[0].text) {
+                    return parsedBody.candidates[0].content.parts[0].text;
+                } else if (parsedBody.error) { // Check if the successfully parsed JSON itself indicates an error from Gemini
+                    console.error('API returned an error object in successful response structure:', parsedBody.error);
+                    const geminiErrorMessage = parsedBody.error.message || 'The AI service reported an unknown issue.';
+                    return `<p style="color: var(--danger);">Sorry, the AI service returned an error: ${geminiErrorMessage}</p>`;
+                } else {
+                    console.error('Unexpected response structure in successful API response:', parsedBody);
+                    return `<p style="color: var(--danger);">Sorry, I received an unexpected response format from the AI service. Please try again later.</p>`;
+                }
+
+            } catch (error) { // This is the outer catch for network errors (e.g., server down, DNS issue) or other issues with fetch itself
+                console.error("Gemini API call failed (e.g., network error, CORS, etc.):", error);
+                return `<p style="color: var(--danger);">Sorry, I couldn't connect to the AI service: ${error.message}. Please check your internet connection and make sure the server is running.</p>`;
+            }
+        }
+
+        async function showRuleExplanation(provider, client, status, notes) {
+            openModal();
+            const modalBody = document.getElementById('modal-body');
+            const modalFooter = document.getElementById('modal-footer');
+            modalBody.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center; color: var(--text-muted);">Generating AI-powered explanation...</p>';
+            modalFooter.innerHTML = '';
+
+            const prompt = `
+                Explain the following cross-border compliance rule in simple, clear terms for a non-legal audience like a recruiter.
+
+                - **Provider's Zone:** ${provider}
+                - **Client's Zone:** ${client}
+                - **Outcome:** ${status}
+                - **Reason/Notes:** ${notes}
+
+                Structure your response using Markdown:
+                1.  **Rule Summary:** A one-sentence summary of the rule.
+                2.  **Why this happens:** A simple explanation of the logic. For example, mention if it's because the client's country is strict or the provider's country is permissive.
+                3.  **Action for Recruiters:** A clear, actionable takeaway.
+            `;
+
+            const explanation = await callGeminiAPI(prompt);
+            modalBody.innerHTML = showdownConverter.makeHtml(explanation);
+            
+            // Add scenario generator button
+            modalFooter.innerHTML = `
+                <button class="ai-btn" id="scenario-btn" 
+                        data-provider="${provider}" 
+                        data-client="${client}" 
+                        data-status="${status}" 
+                        data-notes="${notes}">
+                    <i class="fas fa-magic"></i> Generate Hypothetical Scenario
+                </button>
+            `;
+            document.getElementById('scenario-btn').addEventListener('click', handleScenarioClick);
+        }
+
+        async function handleScenarioClick(event) {
+            const button = event.currentTarget;
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            
+            const { provider, client, status, notes } = button.dataset;
+            const modalBody = document.getElementById('modal-body');
+
+            // Clear modal body before showing loading spinner for scenario
+            modalBody.innerHTML = '';
+            modalBody.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center; color: var(--text-muted);">Generating AI-powered scenario...</p>';
+
+            const scenarioPrompt = `
+                Create a brief, practical, hypothetical case study for a healthcare recruiter to illustrate the following compliance rule:
+
+                - **Rule:** A provider from a **${provider}** zone wants to serve a client in a **${client}** zone.
+                - **Outcome:** The result is **${status}**.
+                - **Details:** ${notes}
+
+                The scenario should feature a fictional clinician and client and clearly demonstrate the real-world consequence of this rule. Keep it concise (2-3 paragraphs). Format it as a Markdown blockquote.
+            `;
+
+            const scenario = await callGeminiAPI(scenarioPrompt);
+
+            // Replace modal body with scenario content only
+            modalBody.innerHTML = `
+                <h3><i class="fas fa-book-open"></i> Hypothetical Scenario</h3>
+                ${showdownConverter.makeHtml(scenario)}
+            `;
+            
+            // Scroll to the new content
+            modalBody.scrollTop = modalBody.scrollHeight;
+            
+            button.style.display = 'none'; // Hide button after use
+        }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            populateMatrixTable();
+        });
+    </script>
+</body>
+</html>

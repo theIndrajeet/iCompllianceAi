@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iCompliance | Cross-Border Compliance Dashboard</title>
+    <!-- Navigation CSS -->
+    <link rel="stylesheet" href="navigation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2d9cdb;
+            --primary-dark: #4f46e5;
+            --secondary: #f2f2f2;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f0f10;
+            --darker: #050506;
+            --card: #18181b;
+            --border: #27272a;
+            --text: #fafafa;
+            --text-muted: #a1a1aa;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Background */
+        .universe-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: radial-gradient(ellipse at bottom, #1b1b2f 0%, #050506 100%);
+            overflow: hidden;
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--gradient-1);
+            top: -300px;
+            left: -300px;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--gradient-2);
+            bottom: -200px;
+            right: -200px;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(100px, 100px) scale(0.9); }
+        }
+
+        /* Main Content */
+        main {
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            background: var(--gradient-1);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            line-height: 1.7;
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: rgba(24, 24, 27, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 2rem;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Zone Cards */
+        .zone-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .zone-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .zone-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .zone-card.red::before { background: var(--danger); }
+        .zone-card.blue::before { background: var(--primary); }
+        .zone-card.green::before { background: var(--success); }
+
+        .zone-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .zone-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .zone-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .zone-icon.red { background: var(--danger); }
+        .zone-icon.blue { background: var(--primary); }
+        .zone-icon.green { background: var(--success); }
+
+        .zone-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .zone-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .zone-description {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .zone-examples {
+            background: var(--darker);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .zone-examples h4 {
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .zone-examples ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .zone-examples li {
+            padding: 0.5rem 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .zone-examples li::before {
+            content: '▸';
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+
+        /* Concept Cards */
+        .concept-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .concept-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .concept-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .concept-card:hover::before {
+            opacity: 0.05;
+        }
+
+        .concept-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .concept-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .concept-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .concept-description {
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* Service Scope */
+        .service-scope {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .service-scope h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .scope-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .scope-column h4 {
+            color: var(--success);
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .scope-column.restricted h4 {
+            color: var(--danger);
+        }
+
+        .scope-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .scope-list li {
+            padding: 0.5rem 0;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .scope-list li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .scope-list.restricted li::before {
+            content: '✗';
+            color: var(--danger);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .concept-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .zone-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .scope-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+            
+            .container {
+                padding: 2rem 1rem;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-up {
+            animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Background -->
+    <div class="universe-bg">
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Hero Section -->
+            <div class="hero fade-in">
+                <h1>Cross-Border Compliance Dashboard</h1>
+                <p>
+                    Understanding cross-border service permissions is critical when delivering psychological support across jurisdictions. 
+                    This dashboard explains our compliance framework and regulatory guidance.
+                </p>
+            </div>
+
+            <!-- Core Concepts -->
+            <div class="concept-grid">
+                <div class="concept-card glass-card">
+                    <div class="concept-header">
+                        <div class="concept-icon">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                        <div class="concept-title">Inbound Services</div>
+                    </div>
+                    <div class="concept-description">
+                        Services <strong>delivered to a client located in a specific country</strong>, regardless of where the provider is based. 
+                        The key question is: <em>"Can a foreign provider legally serve a client in this country?"</em>
+                        <br><br>
+                        <strong>Example:</strong> A UK-licensed therapist providing services to a client located in Singapore.
+                    </div>
+                </div>
+
+                <div class="concept-card glass-card">
+                    <div class="concept-header">
+                        <div class="concept-icon">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <div class="concept-title">Outbound Services</div>
+                    </div>
+                    <div class="concept-description">
+                        Services where a provider, <strong>licensed or located in a specific country</strong>, offers services to clients abroad. 
+                        The focus is: <em>"Does this provider's home country allow them to deliver services cross-border?"</em>
+                        <br><br>
+                        <strong>Example:</strong> A Singapore-licensed counsellor providing services to clients in other countries.
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Compliance Color Zones -->
+            <div class="glass-card">
+                <h2 style="font-size: 2rem; margin-bottom: 1rem; text-align: center;">
+                    <i class="fas fa-traffic-light" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                    Compliance Color Zones
+                </h2>
+                <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">
+                    To simplify complex legal rules across jurisdictions, each scenario is color-coded based on regulatory strictness.
+                </p>
+
+                <div class="zone-grid">
+                    <!-- Red Zone -->
+                    <div class="zone-card red">
+                        <div class="zone-header">
+                            <div class="zone-icon red">
+                                <i class="fas fa-ban"></i>
+                            </div>
+                            <div>
+                                <div class="zone-title" style="color: var(--danger);">RED Zone</div>
+                                <div class="zone-subtitle">Highly Regulated</div>
+                            </div>
+                        </div>
+                        <div class="zone-description">
+                            Services <strong>cannot</strong> be provided across borders without a <strong>local license or registration</strong>. 
+                            This means therapy, treatment, or diagnosis is strictly <strong>restricted</strong> to licensed professionals within that country.
+                        </div>
+                        <div class="zone-examples">
+                            <h4>Examples</h4>
+                            <ul>
+                                <li>Providing therapy to a US client without a state license</li>
+                                <li>Clinical services in highly regulated EU markets</li>
+                                <li>Diagnosis or treatment in protected title jurisdictions</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Blue Zone -->
+                    <div class="zone-card blue">
+                        <div class="zone-header">
+                            <div class="zone-icon blue">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div>
+                                <div class="zone-title" style="color: var(--primary);">BLUE Zone</div>
+                                <div class="zone-subtitle">Conditional</div>
+                            </div>
+                        </div>
+                        <div class="zone-description">
+                            Services may be allowed <strong>under certain legal conditions</strong>. These typically include temporary registration, 
+                            limiting services to advice-only roles, requiring client consent, and credential disclosure.
+                        </div>
+                        <div class="zone-examples">
+                            <h4>Common Conditions</h4>
+                            <ul>
+                                <li>Temporary registration or notice requirements</li>
+                                <li>Services limited to non-clinical support only</li>
+                                <li>Informed consent and scope disclosure required</li>
+                                <li>Provider credential verification needed</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Green Zone -->
+                    <div class="zone-card green">
+                        <div class="zone-header">
+                            <div class="zone-icon green">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div>
+                                <div class="zone-title" style="color: var(--success);">GREEN Zone</div>
+                                <div class="zone-subtitle">Open Practice</div>
+                            </div>
+                        </div>
+                        <div class="zone-description">
+                            These countries do not restrict cross-border mental health services or explicitly allow them. 
+                            Providers can offer non-clinical support without local licensing, provided clients give informed consent.
+                        </div>
+                        <div class="zone-examples">
+                            <h4>Typical Scenarios</h4>
+                            <ul>
+                                <li>Coaching and psychoeducation services</li>
+                                <li>Wellbeing counselling (non-clinical)</li>
+                                <li>Mental health support with consent</li>
+                                <li>Cross-border consultations allowed</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Service Scope -->
+            <div class="service-scope">
+                <h3>
+                    <i class="fas fa-brain"></i>
+                    Scope of Services – Critical Limitation
+                </h3>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                    This compliance framework applies only to specific types of mental health services. Understanding what is and isn't covered is essential for proper compliance.
+                </p>
+                
+                <div class="scope-grid">
+                    <div class="scope-column">
+                        <h4><i class="fas fa-check" style="margin-right: 0.5rem;"></i>Services Covered</h4>
+                        <ul class="scope-list">
+                            <li>Coaching and life guidance</li>
+                            <li>Mental health support</li>
+                            <li>Psychoeducation</li>
+                            <li>Wellbeing counselling (non-clinical)</li>
+                            <li>Stress management</li>
+                            <li>Emotional support</li>
+                        </ul>
+                    </div>
+                    <div class="scope-column restricted">
+                        <h4><i class="fas fa-times" style="margin-right: 0.5rem;"></i>Services NOT Covered</h4>
+                        <ul class="scope-list restricted">
+                            <li>Clinical diagnosis</li>
+                            <li>Medical treatment</li>
+                            <li>Medication prescription</li>
+                            <li>Therapy for severe mental illness</li>
+                            <li>Psychometric testing</li>
+                            <li>Forensic psychological services</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Assumptions -->
+            <div class="glass-card">
+                <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--primary);">
+                    <i class="fas fa-list-check" style="margin-right: 0.5rem;"></i>
+                    Framework Assumptions
+                </h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                    <div style="background: var(--darker); padding: 1.5rem; border-radius: 12px;">
+                        <h4 style="color: var(--success); margin-bottom: 1rem;">
+                            <i class="fas fa-laptop" style="margin-right: 0.5rem;"></i>
+                            Service Delivery
+                        </h4>
+                        <p style="color: var(--text-muted);">All services are delivered virtually through secure digital platforms, not in-person.</p>
+                    </div>
+                    <div style="background: var(--darker); padding: 1.5rem; border-radius: 12px;">
+                        <h4 style="color: var(--success); margin-bottom: 1rem;">
+                            <i class="fas fa-user-check" style="margin-right: 0.5rem;"></i>
+                            Client Consent
+                        </h4>
+                        <p style="color: var(--text-muted);">Clients provide informed consent through the platform understanding service scope and limitations.</p>
+                    </div>
+                    <div style="background: var(--darker); padding: 1.5rem; border-radius: 12px;">
+                        <h4 style="color: var(--success); margin-bottom: 1rem;">
+                            <i class="fas fa-id-card" style="margin-right: 0.5rem;"></i>
+                            Provider Transparency
+                        </h4>
+                        <p style="color: var(--text-muted);">Provider profiles include licensing information, country of practice, and scope of services.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Why This Matters -->
+            <div class="glass-card" style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3);">
+                <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--danger);">
+                    <i class="fas fa-shield-alt" style="margin-right: 0.5rem;"></i>
+                    Why Compliance Matters
+                </h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;"><i class="fas fa-balance-scale"></i></div>
+                        <h4 style="margin-bottom: 0.5rem;">Legal Protection</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Reduces legal and regulatory risks for all parties</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;"><i class="fas fa-shield-alt"></i></div>
+                        <h4 style="margin-bottom: 0.5rem;">Client Safety</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Protects clients and ensures quality of care</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;"><i class="fas fa-globe-americas"></i></div>
+                        <h4 style="margin-bottom: 0.5rem;">Global Alignment</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Ensures services are ethically delivered worldwide</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;"><i class="fas fa-building"></i></div>
+                        <h4 style="margin-bottom: 0.5rem;">Brand Protection</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Maintains Intellect's reputation and trust</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="glass-card" style="text-align: center; background: var(--gradient-1); color: white;">
+                <h2 style="font-size: 2rem; margin-bottom: 1rem;">Ready to Analyze Compliance?</h2>
+                <p style="margin-bottom: 2rem; opacity: 0.9;">
+                    Use this dashboard to validate every provider–client pair before onboarding or delivering services across borders.
+                </p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="./index.html" style="background: white; color: var(--primary); padding: 1rem 2rem; border-radius: 12px; text-decoration: none; font-weight: 600; transition: transform 0.3s ease;">
+                        <i class="fas fa-calculator" style="margin-right: 0.5rem;"></i>
+                        Use Calculator
+                    </a>
+                    <a href="./compliance-matrix.html" style="background: rgba(255,255,255,0.2); color: white; padding: 1rem 2rem; border-radius: 12px; text-decoration: none; font-weight: 600; border: 1px solid rgba(255,255,255,0.3); transition: transform 0.3s ease;">
+                        <i class="fas fa-table" style="margin-right: 0.5rem;"></i>
+                        View Matrix
+                    </a>
+                    <a href="./compliance-bot.html" style="background: rgba(255,255,255,0.2); color: white; padding: 1rem 2rem; border-radius: 12px; text-decoration: none; font-weight: 600; border: 1px solid rgba(255,255,255,0.3); transition: transform 0.3s ease;">
+                        <i class="fas fa-robot" style="margin-right: 0.5rem;"></i>
+                        AI Assistant
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Navigation Script -->
+    <script src="navigation.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="complianceData.js"></script>
+    <script src="dashboard.js"></script>
+    <script>
+        // Add hover animations to cards
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.zone-card, .concept-card, .stat-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Add staggered animation to elements
+            const animatedElements = document.querySelectorAll('.concept-card, .zone-card');
+            animatedElements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+                el.classList.add('fade-in');
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+
+    <footer style="text-align: center; margin-top: 4rem; padding: 2rem; border-top: 1px solid var(--border); color: var(--text-muted);">
+        © 2025 Intellect (Prototype by Legal Team - Intellect). All rights reserved. For internal review only.
+    </footer>
+</body>
+</html>
