@@ -666,15 +666,10 @@
                 progressFill.style.background = 'var(--gradient-1)';
                 progressText.style.color = 'var(--primary)';
             }
-        }
-        
-        /**
-         * Generic function to call the Gemini API.
-         * @param {string} prompt - The prompt to send to the Gemini API.
-         * @returns {Promise<string>} The text response from the API.
-         */
+                }
+
         async function callGeminiAPI(prompt) {
-            const apiKey = "AIzaSyC8YYkX29-4WyWBKWw-Sm6Cm2dATxgvpeA"; // This will be handled by the execution environment.
+            const apiKey = "AIzaSyC8YYkX29-4WyWBKWw-Sm6Cm2dATxgvpeA";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
             
             const payload = {
@@ -709,11 +704,6 @@
             }
         }
 
-        /**
-         * Opens the modal with a specific title and content.
-         * @param {string} title - The title to display in the modal header.
-         * @param {string} contentHTML - The HTML content to display in the modal body.
-         */
         function openModal(title, contentHTML) {
             const modal = document.getElementById('ai-modal');
             const modalTitle = document.getElementById('modal-title');
@@ -724,17 +714,11 @@
             modal.classList.add('active');
         }
 
-        /**
-         * Closes the AI modal.
-         */
         function closeModal() {
             const modal = document.getElementById('ai-modal');
             modal.classList.remove('active');
         }
 
-        /**
-         * Shows an in-app notification.
-         */
         function showNotification(message, type = 'danger') {
             const notification = document.createElement('div');
             const colors = {
@@ -772,9 +756,6 @@
             }, 4000);
         }
 
-        /**
-         * Step 1 for AI Summary: Show a modal to get the candidate's name.
-         */
         function generateAISummary() {
             const title = "Enter Candidate's Name";
             const content = `
@@ -785,9 +766,6 @@
             openModal(title, content);
         }
 
-        /**
-         * Step 2 for AI Summary: Proceed after getting the name.
-         */
         async function proceedWithAISummary() {
             const candidateNameInput = document.getElementById('candidateNameInput');
             const candidateName = candidateNameInput.value.trim() || 'the candidate';
@@ -827,10 +805,6 @@
             document.getElementById('modal-body').innerHTML = showdownConverter.makeHtml(aiResponse);
         }
 
-        /**
-         * Generates interview questions for a specific checklist section.
-         * @param {HTMLElement} button - The button element that was clicked.
-         */
         async function generateInterviewQuestions(button) {
             const sectionCard = button.closest('.glass-card');
             const title = sectionCard.querySelector('h3').textContent.trim().replace(/^\d+\s*/, '');
@@ -856,9 +830,6 @@
             document.getElementById('modal-body').innerHTML = showdownConverter.makeHtml(aiResponse);
         }
 
-        /**
-         * Step 1 for Export: Show a modal to get report details.
-         */
         function exportAssessment() {
             const title = "Export Assessment Report";
             const content = `
@@ -876,9 +847,6 @@
             openModal(title, content);
         }
 
-        /**
-         * Step 2 for Export: Proceed after getting details.
-         */
         function proceedWithExport() {
             const candidateName = document.getElementById('exportCandidateName').value.trim();
             const assessorName = document.getElementById('exportAssessorName').value.trim() || 'HR Team';

@@ -1,4 +1,7 @@
-// Error handling for dependencies
+// Dashboard Module - Handles error states when required dependencies are missing
+// Dependencies: Chart.js library and complianceData.js must be loaded before this script
+
+// Check for Chart.js dependency
 if (typeof Chart === 'undefined') {
     console.error('Chart.js is not loaded. Please include it before dashboard.js');
     document.addEventListener('DOMContentLoaded', () => {
@@ -9,6 +12,7 @@ if (typeof Chart === 'undefined') {
     });
 }
 
+// Check for complianceData dependency
 if (typeof complianceData === 'undefined') {
     console.error('complianceData is not defined. Make sure complianceData.js is loaded before dashboard.js');
     document.addEventListener('DOMContentLoaded', () => {
@@ -19,11 +23,11 @@ if (typeof complianceData === 'undefined') {
     });
 }
 
+// Main initialization
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if complianceData is loaded
+    // Additional validation for complianceData
     if (typeof complianceData === 'undefined') {
         console.error('complianceData.js is not loaded or has an error.');
-        // Display an error message on the dashboard itself
         const container = document.querySelector('.container');
         if(container) {
             container.innerHTML = `<div class="glass-card" style="text-align: center; color: var(--danger);">
@@ -34,14 +38,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Check if complianceData is loaded
+    // Final validation check before rendering
     if (typeof complianceData === 'undefined' || !complianceData) {
         console.error('Compliance data is missing or invalid.');
-        // Optionally, display an error message to the user
         const container = document.querySelector('.container');
         if (container) {
             container.innerHTML = '<p class="error-message">Could not load compliance data. Dashboard cannot be displayed.</p>';
         }
-        return; // Stop execution if data is missing
+        return;
     }
+    
+    // Note: Actual dashboard rendering code would go here
+    // Currently this file only handles error states
 });

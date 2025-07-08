@@ -1,29 +1,35 @@
-// Enhanced Country Database Module based on existing index.html functionality
+// Country Database Module - Displays regulatory information for all jurisdictions
+// Dependencies: complianceData.js must be loaded before this script
 document.addEventListener('DOMContentLoaded', () => {
-    // DOM elements
+    // DOM element references
     const searchInput = document.getElementById('search-input');
     const countryGrid = document.getElementById('country-grid');
     const filterSelect = document.getElementById('zone-filter');
 
-    // Get all displayable jurisdictions with enhanced data
+    /**
+     * Aggregates all jurisdictions from complianceData
+     * Returns array with both detailed countries and basic jurisdiction entries
+     */
     function getAllJurisdictions() {
         const allJurisdictions = [];
         
-        // Add countries with detailed data
+        // Process countries with full regulatory data
         Object.values(complianceData.countries).forEach(country => {
             allJurisdictions.push({
                 name: country.name,
                 region: country.region,
                 hasDetailedData: true,
                 data: country,
+                // Handle both string and object colorCode formats
                 zone: typeof country.colorCode === 'string' ? country.colorCode : 'varies'
             });
         });
         
-        // Add jurisdictions without detailed data
+        // Add jurisdictions that only exist in regional lists
         Object.entries(complianceData.jurisdictions).forEach(([region, regionJurisdictions]) => {
             if (Array.isArray(regionJurisdictions)) {
                 regionJurisdictions.forEach(jurisdictionName => {
+                    // Prevent duplicate entries
                     if (!allJurisdictions.some(j => j.name === jurisdictionName)) {
                         allJurisdictions.push({
                             name: jurisdictionName,
@@ -40,13 +46,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return allJurisdictions;
     }
 
-    // Render country cards with enhanced UI
+    /**
+     * Renders country cards in the grid
+     * Groups by region with headers
+     */
     function renderCountries(jurisdictions) {
         countryGrid.innerHTML = '';
         
         let currentRegion = '';
         jurisdictions.forEach(jurisdiction => {
-            // Add region header if changed
+            // Insert region header when region changes
             if (jurisdiction.region !== currentRegion) {
                 currentRegion = jurisdiction.region;
                 const regionHeader = document.createElement('div');
@@ -59,11 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 countryGrid.appendChild(regionHeader);
             }
             
-            // Create country card
+            // Create country card element
             const card = document.createElement('div');
             card.className = `country-card ${jurisdiction.zone}`;
             
             if (jurisdiction.hasDetailedData) {
+                // Full data available - create detailed card
                 const country = jurisdiction.data;
                 card.onclick = () => showCountryDetails(country.name);
                 card.innerHTML = `
@@ -96,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         View full details <i class="fas fa-chevron-right"></i>
                     </div>`;
             } else {
+                // Limited data - create basic card
                 const flag = getFlagForJurisdiction(jurisdiction.name);
                 card.innerHTML = `
                     <div class="country-header">
@@ -114,15 +125,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Filter countries based on search and zone selection
+    /**
+     * Filters jurisdictions based on search term and zone selection
+     */
     function filterCountries() {
         const searchTerm = searchInput.value.toLowerCase();
         const zoneFilter = filterSelect.value;
         
         const allJurisdictions = getAllJurisdictions();
         const filtered = allJurisdictions.filter(jurisdiction => {
+            // Text search matches name or region
             const matchesSearch = jurisdiction.name.toLowerCase().includes(searchTerm) || 
                                 jurisdiction.region.toLowerCase().includes(searchTerm);
+            // Zone filter matches selected zone
             const matchesZone = zoneFilter === 'all' || 
                               (zoneFilter === 'varies' && jurisdiction.zone === 'varies') ||
                               jurisdiction.zone === zoneFilter;
@@ -133,18 +148,20 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCountries(filtered);
     }
 
-    // Initialize
+    // Initialize if data is available
     if (complianceData) {
         renderCountries(getAllJurisdictions());
-        
-        // Event listeners
+        // Attach event listeners
         if (searchInput) searchInput.addEventListener('input', filterCountries);
         if (filterSelect) filterSelect.addEventListener('change', filterCountries);
     } else {
         console.error('complianceData not loaded');
     }
 
-    // Reuse existing helper functions from index.html
+    /**
+     * Displays detailed modal for selected country
+     * Shows all regulatory requirements by service type
+     */
     function showCountryDetails(countryName) {
         const country = complianceData.countries[countryName];
         if (!country) {
@@ -152,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Create modal HTML (simplified version from index.html)
+        // Create modal HTML
         const modalHTML = `
             <div class="modal-overlay" id="modalOverlay">
                 <div class="modal">
@@ -178,11 +195,9 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         
-        // Insert modal into DOM
         document.body.insertAdjacentHTML('beforeend', modalHTML);
-        
-        // Add event listener for closing modal
         const modal = document.getElementById('modalOverlay');
+        // Close modal on overlay click or close button
         modal.addEventListener('click', (e) => {
             if (e.target === modal || e.target.closest('.modal-close')) {
                 modal.remove();
@@ -190,6 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    // Export functions to global scope for external access
     window.showCountryDetails = showCountryDetails;
     window.getFlagForJurisdiction = getFlagForJurisdiction;
 });

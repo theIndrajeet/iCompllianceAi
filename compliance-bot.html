@@ -11,7 +11,6 @@
     <!-- Showdown for rendering Markdown in the chat -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <style>
-        /* --- Base & Theming --- */
         :root {
             --primary: #2d9cdb;
             --primary-dark: #4f46e5;
@@ -50,7 +49,6 @@
             overflow: hidden; /* Prevent body scrolling */
         }
         
-        /* --- Background Effects --- */
         .universe-bg {
             position: fixed;
             width: 100%;
@@ -67,16 +65,12 @@
         @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(80px, 120px) scale(0.95); } }
 
 
-        /* --- Main App Layout --- */
         .page-wrapper {
             display: flex;
             flex-direction: column;
             height: 100vh;
-            /* FIX: Added padding-top to push content below the fixed navigation bar */
             padding-top: var(--nav-height); 
         }
-
-        /* Nav is loaded from navigation.js and styled by navigation.css */
         
         .app-layout {
             display: flex;
@@ -84,7 +78,6 @@
             overflow: hidden; /* Prevents layout issues */
         }
 
-        /* --- Sidebar Styles --- */
         .history-sidebar {
             width: 280px;
             background: var(--sidebar-bg);
@@ -354,7 +347,6 @@
             const systemPersona = `You are the iCompliance AI Assistant, a friendly and knowledgeable expert on cross-border compliance concepts. Your primary role is to be a "doubt cleaner," providing clear and concise explanations. **Rules:** Do not answer about specific country-to-country rules; guide the user to the iCompliance Calculator for specifics. Use Markdown for clarity. Keep answers concise.`;
 
             // --- Sidebar Toggle for Mobile ---
-            // This relies on the menu-toggle button from navigation.js
             function setupMobileSidebarToggle() {
                  const menuToggle = document.getElementById('menuToggle');
                  if(menuToggle) {

@@ -42,7 +42,6 @@
             min-height: 100vh;
         }
 
-        /* Advanced Background */
         .universe-bg {
             position: fixed;
             width: 100%;
@@ -116,7 +115,6 @@
             75% { transform: translate(50px, 50px) scale(1.05); }
         }
 
-        /* Main Content */
         main {
             margin-top: 80px; /* Space for fixed navigation */
             min-height: calc(100vh - 80px);
@@ -131,7 +129,6 @@
             padding: 3rem 2rem;
         }
 
-        /* Hero Section */
         .hero {
             text-align: center;
             padding: 4rem 0;
@@ -403,7 +400,6 @@
             margin-bottom: 0;
         }
 
-        /* Animations */
         .fade-in {
             animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -413,7 +409,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             main {
                 margin-top: 70px; /* Adjust for mobile nav height */
@@ -520,7 +515,6 @@
             }
         }
 
-        // Utility functions
         function getFlagForJurisdiction(jurisdictionName) {
             const countryData = complianceData.countries[jurisdictionName];
             if (countryData && countryData.flag) {
@@ -773,7 +767,6 @@
             if (regCountSummary) regCountSummary.textContent = totalRegions;
         }
 
-        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             populateCountries();
             document.querySelectorAll('.fade-in').forEach((el, i) => {

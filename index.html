@@ -43,7 +43,6 @@
             min-height: 100vh;
         }
 
-        /* Advanced Background */
         .universe-bg {
             position: fixed;
             width: 100%;
@@ -199,7 +198,6 @@
             border-radius: 3px;
         }
 
-        /* Main Content */
         main {
             margin-top: 80px; /* Adjust if nav height changes */
             min-height: calc(100vh - 80px);
@@ -213,7 +211,6 @@
             padding: 3rem 2rem;
         }
 
-        /* Hero Section */
         .hero {
             text-align: center;
             padding: 4rem 0;
@@ -882,8 +879,6 @@
             100% { background-position: -200% 0; }
         }
 
-        /* Responsive */
-        /* Menu Toggle Button */
         .menu-toggle {
             display: none;
             background: transparent;
@@ -976,7 +971,6 @@
             }
         }
 
-        /* Animations */
         .fade-in {
             animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -1409,10 +1403,7 @@
                 }
             }
         });
-        
-        // showCountryDetails function has been moved to an earlier, global scope position and this duplicate is removed.
 
-        // --- UTILITY FUNCTIONS ---
         function getCurrentDate() {
     return new Date().toISOString().split('T')[0];
 }
@@ -1438,7 +1429,6 @@
             return info || 'Limited regulatory data available';
         }
 
-        // --- SECTION NAVIGATION ---
         function showSection(event, sectionId) {
             document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
             const activeSection = document.getElementById(sectionId);
@@ -1457,29 +1447,31 @@
             }
         }
 
-        // --- COMPLIANCE ANALYSIS (CALCULATOR) & GEMINI API INTEGRATION ---
-        let currentAnalysisContext = {}; // Store context for AI explanation
+        // Global context for current analysis - stores provider/client/service selections
+        let currentAnalysisContext = {};
         
-        // Helper function to extract structured compliance rules
+        /**
+         * Retrieves compliance rules for a specific provider-client-service combination
+         * Returns three types of rules: general color-code rule, provider outbound rule, client inbound rule
+         */
         function getComplianceRules(provider, client, service, complianceData) {
-            // Get relevant country data
             const providerData = complianceData.countries[provider];
             const clientData = complianceData.countries[client];
             if (!providerData || !clientData) return { generalRuleNote: 'Unknown', providerOutboundRule: 'Unknown', clientInboundRule: 'Unknown' };
             
-            // Determine color codes
+            // Convert service name to data key format
             const serviceKey = service.toLowerCase();
             let providerColorCode = determineZone(providerData.colorCode, serviceKey);
             let clientColorCode = determineZone(clientData.colorCode, serviceKey);            
             
-            // Find the general rule based on color codes
+            // Find matching rule based on color codes
             const generalRule = complianceData.rules.find(rule => 
                 rule.clientColorCode.toLowerCase() === clientColorCode.toLowerCase() && 
                 rule.providerColorCode.toLowerCase() === providerColorCode.toLowerCase());
                 
             const generalRuleNote = generalRule ? generalRule.notes : 'No specific rule found for this color combination';
             
-            // Get outbound/inbound rules from respective countries
+            // Extract specific border crossing rules
             const providerOutboundRule = providerData.crossBorder?.outbound || 'No specific outbound rule found';
             const clientInboundRule = clientData.crossBorder?.inbound || 'No specific inbound rule found';
             
@@ -1490,6 +1482,10 @@
             };
         }
 
+        /**
+         * Generates AI-powered compliance summary using Gemini API
+         * Provides natural language explanation of compliance status
+         */
         async function getAIComplianceSummary() {
             const aiSummaryDisplay = document.getElementById('aiSummaryDisplay');
             if (!aiSummaryDisplay || !currentAnalysisContext.provider) {
@@ -1501,10 +1497,9 @@
             
             const { provider, client, service, status } = currentAnalysisContext;
             
-            // Get structured compliance rules
             const rules = getComplianceRules(provider, client, service, complianceData);
 
-            // MODIFIED PROMPT to ground the AI in provided data
+            // Structured prompt for consistent AI responses
             const prompt = `
 You are a helpful compliance assistant. Your task is to synthesize the provided regulatory details into a clear, actionable summary for a clinician.
 
@@ -1534,7 +1529,7 @@ Generate the explanation now.
             try {
                 let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
                 const payload = { contents: chatHistory };
-                const apiKey = "AIzaSyC8YYkX29-4WyWBKWw-Sm6Cm2dATxgvpeA"; // Gemini API key for AI-powered explanations
+                const apiKey = "AIzaSyC8YYkX29-4WyWBKWw-Sm6Cm2dATxgvpeA";
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                 
                 const response = await fetch(apiUrl, {
@@ -1570,24 +1565,32 @@ Generate the explanation now.
         }
 
 
+        /**
+         * Main compliance analysis function - validates inputs and initiates analysis
+         * Shows animated loading screen while processing
+         */
         function analyzeCompliance() {
+            // Get user selections
             const clientJurisdiction = document.getElementById('clientCountry').value;
             const providerJurisdiction = document.getElementById('providerCountry').value;
             const service = document.getElementById('serviceType').value;
             
+            // Validate all fields are selected
             if (!clientJurisdiction || !providerJurisdiction || !service) {
                 showNotification('Please select all parameters', 'error');
                 return;
             }
             
+            // Show result display area
             const resultDisplay = document.getElementById('resultDisplay');
             if (!resultDisplay) return;
             resultDisplay.classList.add('active');
             
-            // Clear previous AI summary
+            // Clear any previous AI summary
             const aiSummaryContainer = document.getElementById('aiSummaryContainer');
             if (aiSummaryContainer) aiSummaryContainer.innerHTML = '';
 
+            // Display animated loading graphic (microchip SVG)
             resultDisplay.innerHTML = `
         <div class="microchip-container">
             <svg class="microchip" viewBox="0 0 128 128" width="128px" height="128px" role="img" aria-label="A square pops in emitting waves and lines, and sparks run through the lines">
@@ -1763,7 +1766,6 @@ Generate the explanation now.
             setTimeout(() => {
                 const rule = findComplianceRule(providerJurisdiction, clientJurisdiction, service);
                 displayResult(rule, clientJurisdiction, providerJurisdiction, service);
-                // Store context for AI explanation
                 currentAnalysisContext = {
                     provider: providerJurisdiction,
                     client: clientJurisdiction,
@@ -1774,18 +1776,24 @@ Generate the explanation now.
             }, 1500);
         }
 
+        /**
+         * Determines compliance rule based on provider and client zones
+         * Uses color-code matrix to determine allowed/semi-allowed/conditional status
+         */
         function findComplianceRule(providerJurisdiction, clientJurisdiction, service) {
+            // Determine zones for both jurisdictions
             const providerZone = determineZone(providerJurisdiction, service)?.toLowerCase();
             const clientZone = determineZone(clientJurisdiction, service)?.toLowerCase();
             
-            // Define the new compliance matrix
+            // Compliance matrix defines relationships between zones
+            // Green = least restrictive, Blue = moderate, Red = most restrictive
             const complianceMatrix = {
                 'green': { 'green': 'allowed', 'blue': 'semi-allowed', 'red': 'conditional' },
                 'blue':  { 'green': 'allowed', 'blue': 'semi-allowed', 'red': 'conditional' },
                 'red':   { 'green': 'allowed', 'blue': 'semi-allowed', 'red': 'conditional' }
             };
 
-            // Default to conditional if zones aren't found
+            // Handle unknown zones or missing matrix entries
             if (!providerZone || !clientZone || !complianceMatrix[providerZone]?.[clientZone]) {
                 return {
                     status: 'conditional',
@@ -1798,7 +1806,7 @@ Generate the explanation now.
             const status = complianceMatrix[providerZone][clientZone];
             let requirements = '';
             
-            // Customize requirements based on status
+            // Generate requirements text based on status
             switch(status) {
                 case 'allowed':
                     requirements = 'Service is generally allowed. Standard terms and conditions apply.';
@@ -1824,11 +1832,16 @@ Generate the explanation now.
                 updated: getCurrentDate()
             };
         }
+        
+        /**
+         * Determines the compliance zone (green/blue/red) for a jurisdiction and service
+         * Handles both string and object colorCode formats
+         */
         function determineZone(jurisdictionName, service) {
             const countryData = complianceData.countries[jurisdictionName];
             if (!countryData) return 'unknown';
             
-            // Map service type to the appropriate data field
+            // Map service names to data object keys
             const serviceMapping = {
                 'counselling': 'counselling',
                 'counselling-psychology': 'counsellingPsychology',
@@ -1837,7 +1850,7 @@ Generate the explanation now.
             
             const serviceField = serviceMapping[service];
             
-            // Check if colorCode is an object with service-specific values
+            // Handle object-based colorCode (service-specific zones)
             if (countryData.colorCode && typeof countryData.colorCode === 'object') {
                 const serviceColorCode = countryData.colorCode[service] || countryData.colorCode[serviceField];
                 if (serviceColorCode) {
@@ -1846,7 +1859,7 @@ Generate the explanation now.
                 return 'varies';
             }
             
-            // If colorCode is a simple string, return it
+            // Handle string-based colorCode (uniform across all services)
             if (countryData.colorCode && typeof countryData.colorCode === 'string') {
                 return countryData.colorCode.toLowerCase();
             }
@@ -1854,18 +1867,24 @@ Generate the explanation now.
             return 'unknown';
         }
 
+        /**
+         * Renders compliance analysis results with appropriate visual indicators
+         * Displays status icon, requirements, and action buttons
+         */
         function displayResult(rule, clientJurisdiction, providerJurisdiction, service) {
             const resultDisplay = document.getElementById('resultDisplay');
             if(!resultDisplay) return;
 
+            // Get country info with fallback for unknown jurisdictions
             const clientCountryInfo = complianceData.countries[clientJurisdiction] || { flag: getFlagForJurisdiction(clientJurisdiction), name: clientJurisdiction };
             const providerCountryInfo = complianceData.countries[providerJurisdiction] || { flag: getFlagForJurisdiction(providerJurisdiction), name: providerJurisdiction };
 
-            // Determine if this is a Blue zone combination that should show as 'Semi Allowed'
+            // Determine zones for special case handling
             const providerZone = determineZone(providerJurisdiction, service)?.toLowerCase();
             const clientZone = determineZone(clientJurisdiction, service)?.toLowerCase();
             const isSemiAllowedCase = (clientZone === 'blue' && ['red', 'blue', 'green'].includes(providerZone));
             
+            // Visual configuration for each status type
             const statusConfig = {
                 'allowed': { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`, color: 'var(--success)', title: 'Service Permitted' },
                 'semi-allowed': { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`, color: 'var(--primary)', title: 'Semi Allowed' },
@@ -1873,7 +1892,7 @@ Generate the explanation now.
                 'denied': { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`, color: 'var(--danger)', title: 'Not Permitted' }
             };
             
-            // Override status for semi-allowed cases
+            // Apply special case logic for blue zones
             const effectiveStatus = isSemiAllowedCase ? 'semi-allowed' : (rule.status || 'conditional'); 
             
             const config = statusConfig[effectiveStatus] || statusConfig['conditional']; 
@@ -1921,7 +1940,6 @@ Generate the explanation now.
 
 
 
-        // --- COUNTRY DATABASE ---
         function populateCountries() {
             const grid = document.getElementById('countriesGrid');
             if (!grid) return;
@@ -2056,8 +2074,6 @@ Generate the explanation now.
         }
 
 
-        // --- MODAL (COUNTRY DETAILS) ---
-        // Make function globally accessible for button click handlers
         window.showCountryDetails = function(countryName) {
             const country = complianceData.countries[countryName];
             if (!country) {
@@ -2129,7 +2145,6 @@ Generate the explanation now.
         }
 
 
-        // --- NOTIFICATION SYSTEM ---
         function showNotification(message, type = 'info') {
             const notification = document.createElement('div');
             let bgColor;
@@ -2161,13 +2176,11 @@ Generate the explanation now.
         document.head.appendChild(notificationAnimationStyle);
         
         function getFlagForJurisdiction(jurisdictionName) {
-            // First try direct lookup
             const countryData = complianceData.countries[jurisdictionName];
             if (countryData && countryData.flag) {
                 return countryData.flag;
             }
             
-            // If country name has special characters or formatting differences, try to match
             const normalizedName = jurisdictionName.toLowerCase().replace(/[&\s-]+/g, '').replace(/[,\.]/g, '');
             
             for (const [country, data] of Object.entries(complianceData.countries)) {
@@ -2177,19 +2190,16 @@ Generate the explanation now.
                 }
             }
             
-            // Check if it's a state format (State, Country)
             if (jurisdictionName.includes(',')) {
                 const countryPart = jurisdictionName.split(',')[1].trim();
-                return getFlagForJurisdiction(countryPart); // Recursive call for the country part
+                return getFlagForJurisdiction(countryPart);
             }
             
-            return '🌐'; // Default if no match found
+            return '🌐';
         }
 
 
-        // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', function() {
-            // Mobile Navigation Menu Toggle
             const menuToggle = document.getElementById('menuToggle');
             const navMenu = document.getElementById('navMenu');
             
@@ -2228,16 +2238,12 @@ Generate the explanation now.
             const clientDatalist = document.getElementById('clientCountries');
             const providerDatalist = document.getElementById('providerCountries');
             
-            // Clear existing options
             clientDatalist.innerHTML = '';
             providerDatalist.innerHTML = '';
             
-            // Get the sorted regions
             const sortedRegions = Object.keys(complianceData.jurisdictions).sort();
             
-            // For each region, add region and its countries
             sortedRegions.forEach(region => {
-                // Add the region as an option
                 const regionOption1 = document.createElement('option');
                 regionOption1.value = region;
                 regionOption1.textContent = `🌐 ${region}`;
@@ -2246,49 +2252,40 @@ Generate the explanation now.
                 const regionOption2 = regionOption1.cloneNode(true);
                 providerDatalist.appendChild(regionOption2);
                 
-                // Add all countries in the region
                 const countriesInRegion = complianceData.jurisdictions[region];
                 if (Array.isArray(countriesInRegion)) {
-                    // Sort countries alphabetically
                     const sortedCountries = [...countriesInRegion].sort();
                     
                     sortedCountries.forEach(countryName => {
                         const flag = getFlagForJurisdiction(countryName);
                         
-                        // Add to client dropdown
                         const countryOption1 = document.createElement('option');
                         countryOption1.value = countryName;
                         countryOption1.textContent = `${flag} ${countryName}`;
                         clientDatalist.appendChild(countryOption1);
                         
-                        // Add to provider dropdown
                         const countryOption2 = countryOption1.cloneNode(true);
                         providerDatalist.appendChild(countryOption2);
-                        
-                        // Handle states/provinces if they exist
                         const countryData = complianceData.countries[countryName];
                         if (countryData && countryData.states) {
                             const stateNames = Object.keys(countryData.states).sort();
-                            stateNames.forEach(stateName => {
-                                const fullName = `${stateName}, ${countryName}`;
-                                
-                                // Add to client dropdown
-                                const stateOption1 = document.createElement('option');
-                                stateOption1.value = fullName;
-                                stateOption1.textContent = `${flag} ${fullName}`;
-                                clientDatalist.appendChild(stateOption1);
-                                
-                                // Add to provider dropdown
-                                const stateOption2 = stateOption1.cloneNode(true);
-                                providerDatalist.appendChild(stateOption2);
-                            });
-                        }
-                    });
-                }
-            });
-            
-            // Update the counts in the UI
-            updateSummaryCounts();
+                                                            stateNames.forEach(stateName => {
+                                    const fullName = `${stateName}, ${countryName}`;
+                                    
+                                    const stateOption1 = document.createElement('option');
+                                    stateOption1.value = fullName;
+                                    stateOption1.textContent = `${flag} ${fullName}`;
+                                    clientDatalist.appendChild(stateOption1);
+                                    
+                                    const stateOption2 = stateOption1.cloneNode(true);
+                                    providerDatalist.appendChild(stateOption2);
+                                });
+                            }
+                        });
+                    }
+                });
+                
+                updateSummaryCounts();
         }
     </script>
     <footer style="text-align: center; margin-top: 50px; font-size: 0.9em; padding: 20px;">

@@ -83,7 +83,6 @@
             50% { transform: translate(100px, 100px) scale(0.9); }
         }
 
-        /* Main Content */
         main {
             min-height: 100vh;
             position: relative;
@@ -96,7 +95,6 @@
             padding: 3rem 2rem;
         }
 
-        /* Hero Section */
         .hero {
             text-align: center;
             padding: 4rem 0;
@@ -374,7 +372,6 @@
             color: var(--danger);
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .concept-grid {
                 grid-template-columns: 1fr;
@@ -397,7 +394,6 @@
             }
         }
 
-        /* Animations */
         .fade-in {
             animation: fadeIn 0.8s ease-out;
         }
@@ -692,7 +688,6 @@
     <script src="complianceData.js"></script>
     <script src="dashboard.js"></script>
     <script>
-        // Add hover animations to cards
         document.addEventListener('DOMContentLoaded', () => {
             const cards = document.querySelectorAll('.zone-card, .concept-card, .stat-card');
             
@@ -706,7 +701,6 @@
                 });
             });
 
-            // Add staggered animation to elements
             const animatedElements = document.querySelectorAll('.concept-card, .zone-card');
             animatedElements.forEach((el, index) => {
                 el.style.animationDelay = `${index * 0.1}s`;
@@ -714,7 +708,6 @@
             });
         });
 
-        // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();

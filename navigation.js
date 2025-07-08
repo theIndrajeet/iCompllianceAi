@@ -1,10 +1,12 @@
-// Navigation menu functionality
+// Navigation Component - Creates consistent navigation bar across all pages
+// Automatically highlights current page and handles mobile menu toggle
 document.addEventListener('DOMContentLoaded', () => {
-    // Get current page path
+    // Determine current page from URL
     const currentPath = window.location.pathname;
     const currentPage = currentPath.split('/').pop() || 'index.html';
 
-    // Create navigation menu HTML
+    // Navigation HTML template
+    // Note: Uses template literals for dynamic active class assignment
     const navHTML = `
         <nav id="navbar">
             <div class="nav-container">
@@ -32,24 +34,26 @@ document.addEventListener('DOMContentLoaded', () => {
         </nav>
     `;
 
-    // Insert navigation at the start of body
+    // Insert navigation at the beginning of body
     document.body.insertAdjacentHTML('afterbegin', navHTML);
-
-    // Mobile Navigation Menu Toggle
+    
+    // Mobile menu toggle functionality
     const menuToggle = document.getElementById('menuToggle');
     const navMenu = document.getElementById('navMenu');
     
     if (menuToggle && navMenu) {
         menuToggle.addEventListener('click', () => {
+            // Toggle mobile menu visibility
             menuToggle.classList.toggle('active');
             navMenu.classList.toggle('active');
         });
     }
 
-    // Handle scroll behavior for fixed navigation
+    // Scroll effect for navbar background
     const navbar = document.getElementById('navbar');
     if (navbar) {
         window.addEventListener('scroll', () => {
+            // Add 'scrolled' class when user scrolls past 50px
             if (window.scrollY > 50) {
                 navbar.classList.add('scrolled');
             } else {

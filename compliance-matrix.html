@@ -41,7 +41,6 @@
             min-height: 100vh;
         }
 
-        /* Enhanced Universe Background with animated stars */
         .universe-bg {
             position: fixed;
             width: 100%;
@@ -70,7 +69,6 @@
             to { transform: translateY(-200px); }
         }
 
-        /* Main Content */
         main {
             min-height: 100vh;
             position: relative;
@@ -95,7 +93,6 @@
             }
         }
 
-        /* Enhanced Hero Section */
         .hero {
             text-align: center;
             padding: 4rem 0 3rem 0;
@@ -132,7 +129,6 @@
             to { opacity: 1; }
         }
         
-        /* Enhanced Table Wrapper */
         .matrix-table-wrapper {
             background: var(--card);
             border-radius: 24px;
@@ -156,7 +152,6 @@
             opacity: 0.5;
         }
 
-        /* Enhanced Table */
         .matrix-table {
             width: 100%;
             border-collapse: separate;
@@ -201,7 +196,6 @@
             border-bottom: none;
         }
 
-        /* Enhanced Zone Labels */
         .zone-label {
             display: inline-flex;
             align-items: center;
@@ -258,7 +252,6 @@
             color: var(--danger);
         }
 
-        /* Enhanced Status Cell */
         .status-cell {
             font-weight: 700;
             font-size: 1.1rem;
@@ -291,7 +284,6 @@
             max-width: 400px;
         }
         
-        /* Enhanced AI Button */
         .ai-btn {
             display: inline-flex;
             align-items: center;
@@ -346,7 +338,6 @@
             box-shadow: none;
         }
 
-        /* Enhanced Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -509,7 +500,6 @@
             justify-content: center;
         }
 
-        /* Enhanced Loading Spinner */
         .loading-spinner {
             border: 3px solid rgba(255, 255, 255, 0.1);
             border-left-color: var(--primary);
@@ -525,7 +515,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Enhanced Footer */
         footer {
             text-align: center;
             margin-top: 4rem;
@@ -651,7 +640,6 @@
             simpleLineBreaks: true
         });
 
-        // --- Data for the Matrix ---
         const matrixRules = [
             { provider: 'Green', client: 'Green', status: 'Allowed', notes: "Standard practice is permitted with no special cross-border requirements." },
             { provider: 'Green', client: 'Blue', status: 'Semi-Allowed', notes: "Service may be allowed with additional conditions. Please verify specific Blue zone requirements for the client jurisdiction." },
@@ -664,10 +652,9 @@
             { provider: 'Red', client: 'Red', status: 'Conditional', notes: "Service is conditionally allowed and may require additional verification. A local license in the client's Red zone may be required." }
         ];
 
-        // --- UI Rendering ---
         function populateMatrixTable() {
             const tbody = document.getElementById('matrix-body');
-            tbody.innerHTML = ''; // Clear existing rows
+            tbody.innerHTML = '';
             
             matrixRules.forEach((rule, index) => {
                 const row = document.createElement('tr');
@@ -698,13 +685,11 @@
                 tbody.appendChild(row);
             });
             
-            // Add event listeners after rows are created
             document.querySelectorAll('.explain-btn').forEach(button => {
                 button.addEventListener('click', handleExplainClick);
             });
         }
 
-        // --- Modal & AI Logic ---
         function openModal() {
             document.getElementById('ai-modal').classList.add('active');
         }
@@ -713,7 +698,6 @@
             document.getElementById('ai-modal').classList.remove('active');
         }
 
-        // Close modal with ESC key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeModal();
@@ -727,8 +711,7 @@
         }
         
         async function callGeminiAPI(prompt) {
-            // Making a direct call to the Gemini API instead of going through a proxy
-            const API_KEY = 'AIzaSyC8YYkX29-4WyWBKWw-Sm6Cm2dATxgvpeA'; // API key
+            const API_KEY = 'AIzaSyC8YYkX29-4WyWBKWw-Sm6Cm2dATxgvpeA';
             const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${API_KEY}`;
             const modalBody = document.getElementById('modal-body');
 
@@ -748,29 +731,27 @@
                     body: JSON.stringify(payload),
                 });
 
-                const bodyAsText = await response.text(); // Read the body ONCE, regardless of status
+                const bodyAsText = await response.text();
 
                 if (!response.ok) {
-                    let errorDetailLog = ''; // For detailed logging
-                    let errorDetailUser = ''; // For user-facing message
+                    let errorDetailLog = '';
+                    let errorDetailUser = '';
 
                     if (bodyAsText && bodyAsText.trim() !== "") {
                         try {
                             const errorJson = JSON.parse(bodyAsText);
                             if (errorJson.error && errorJson.error.message) {
                                 errorDetailLog = errorJson.error.message;
-                                errorDetailUser = errorJson.error.message; // Use specific message if available
+                                errorDetailUser = errorJson.error.message;
                             } else if (errorJson.message) {
                                 errorDetailLog = errorJson.message;
-                                errorDetailUser = errorJson.message; // Use specific message if available
+                                errorDetailUser = errorJson.message;
                             } else {
-                                // If no specific message field, log the whole JSON for debugging, but give a generic message to user
                                 errorDetailLog = bodyAsText; 
                                 errorDetailUser = "The server returned an error without a specific message.";
                             }
                         } catch (parseError) {
-                            // If parsing fails, it means the error response was not JSON.
-                            errorDetailLog = bodyAsText; // Log the raw text
+                            errorDetailLog = bodyAsText;
                             errorDetailUser = "The server returned an error in a non-JSON format.";
                             console.warn("Could not parse non-OK API response body as JSON. Raw body: " + bodyAsText + " Status: " + response.status, parseError);
                         }
@@ -784,7 +765,6 @@
                     return `<p style="color: var(--danger);">${errorTextForUser}</p>`;
                 }
 
-                // If response.ok is true, try to parse the bodyAsText
                 let parsedBody;
                 try {
                     if (!bodyAsText || bodyAsText.trim() === "") {
@@ -804,7 +784,7 @@
                     parsedBody.candidates[0].content.parts && 
                     parsedBody.candidates[0].content.parts[0].text) {
                     return parsedBody.candidates[0].content.parts[0].text;
-                } else if (parsedBody.error) { // Check if the successfully parsed JSON itself indicates an error from Gemini
+                } else if (parsedBody.error) {
                     console.error('API returned an error object in successful response structure:', parsedBody.error);
                     const geminiErrorMessage = parsedBody.error.message || 'The AI service reported an unknown issue.';
                     return `<p style="color: var(--danger);">Sorry, the AI service returned an error: ${geminiErrorMessage}</p>`;
@@ -813,7 +793,7 @@
                     return `<p style="color: var(--danger);">Sorry, I received an unexpected response format from the AI service. Please try again later.</p>`;
                 }
 
-            } catch (error) { // This is the outer catch for network errors (e.g., server down, DNS issue) or other issues with fetch itself
+            } catch (error) {
                 console.error("Gemini API call failed (e.g., network error, CORS, etc.):", error);
                 return `<p style="color: var(--danger);">Sorry, I couldn't connect to the AI service: ${error.message}. Please check your internet connection and make sure the server is running.</p>`;
             }
@@ -843,7 +823,6 @@
             const explanation = await callGeminiAPI(prompt);
             modalBody.innerHTML = showdownConverter.makeHtml(explanation);
             
-            // Add scenario generator button
             modalFooter.innerHTML = `
                 <button class="ai-btn" id="scenario-btn" 
                         data-provider="${provider}" 
@@ -864,7 +843,6 @@
             const { provider, client, status, notes } = button.dataset;
             const modalBody = document.getElementById('modal-body');
 
-            // Clear modal body before showing loading spinner for scenario
             modalBody.innerHTML = '';
             modalBody.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center; color: var(--text-muted);">Generating AI-powered scenario...</p>';
 
@@ -880,19 +858,16 @@
 
             const scenario = await callGeminiAPI(scenarioPrompt);
 
-            // Replace modal body with scenario content only
             modalBody.innerHTML = `
                 <h3><i class="fas fa-book-open"></i> Hypothetical Scenario</h3>
                 ${showdownConverter.makeHtml(scenario)}
             `;
             
-            // Scroll to the new content
             modalBody.scrollTop = modalBody.scrollHeight;
             
-            button.style.display = 'none'; // Hide button after use
+            button.style.display = 'none';
         }
 
-        // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
             populateMatrixTable();
         });
