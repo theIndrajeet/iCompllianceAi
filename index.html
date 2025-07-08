@@ -1493,7 +1493,7 @@
                 return;
             }
 
-            aiSummaryDisplay.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center;">✨ Generating AI explanation...</p>';
+            aiSummaryDisplay.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center;">Generating AI explanation...</p>';
             
             const { provider, client, service, status } = currentAnalysisContext;
             
@@ -1555,11 +1555,11 @@ Generate the explanation now.
                      console.warn("Unexpected Gemini API response structure:", result);
                 }
                 
-                aiSummaryDisplay.innerHTML = `<h4>✨ AI-Powered Explanation</h4><p>${summaryText.replace(/\n/g, '<br>')}</p>`;
+                aiSummaryDisplay.innerHTML = `<h4>AI-Powered Explanation</h4><p>${summaryText.replace(/\n/g, '<br>')}</p>`;
 
             } catch (error) {
                 console.error('Error fetching AI summary:', error);
-                aiSummaryDisplay.innerHTML = `<h4>✨ AI-Powered Explanation</h4><p style="color: var(--danger);">Error generating explanation: ${error.message}. Please refer to the detailed notes above.</p>`;
+                aiSummaryDisplay.innerHTML = `<h4>AI-Powered Explanation</h4><p style="color: var(--danger);">Error generating explanation: ${error.message}. Please refer to the detailed notes above.</p>`;
                 showNotification('Failed to get AI explanation. ' + error.message, 'error');
             }
         }
@@ -1759,7 +1759,7 @@ Generate the explanation now.
         </div>
         <div class="result-status">Analyzing Compliance...</div>
         <div id="aiSummaryContainer" style="width:100%; margin-top:1.5rem;">
-            <button class="ai-explain-btn" onclick="getAIComplianceSummary()">✨ Get AI Explanation</button>
+            <button class="ai-explain-btn" onclick="getAIComplianceSummary()">Get AI Explanation</button>
             <div id="aiSummaryDisplay" style="margin-top:1rem;"></div>
         </div>`;
             
@@ -1898,7 +1898,7 @@ Generate the explanation now.
             const config = statusConfig[effectiveStatus] || statusConfig['conditional']; 
             
             let aiSummaryHTML = `<div id="aiSummaryContainer" style="width:100%; margin-top:1.5rem;">
-                                     <button class="ai-explain-btn" onclick="getAIComplianceSummary()">✨ Get AI Explanation</button>
+                                     <button class="ai-explain-btn" onclick="getAIComplianceSummary()">Get AI Explanation</button>
                                      <div id="aiSummaryDisplay" style="margin-top:1rem;"></div>
                                  </div>`;
 
@@ -2195,7 +2195,7 @@ Generate the explanation now.
                 return getFlagForJurisdiction(countryPart);
             }
             
-            return '🌐';
+            return '[GLOBAL]';
         }
 
 
@@ -2246,7 +2246,7 @@ Generate the explanation now.
             sortedRegions.forEach(region => {
                 const regionOption1 = document.createElement('option');
                 regionOption1.value = region;
-                regionOption1.textContent = `🌐 ${region}`;
+                regionOption1.textContent = `[REGION] ${region}`;
                 clientDatalist.appendChild(regionOption1);
                 
                 const regionOption2 = regionOption1.cloneNode(true);

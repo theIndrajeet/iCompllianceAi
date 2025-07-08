@@ -380,7 +380,7 @@
             </div>
             
             <div class="info-box" style="max-width: 800px; margin: 0 auto 3rem;">
-                <span class="info-icon">🌍</span>
+                <span class="info-icon">i</span>
                 <div>
                     <strong>Purpose:</strong> This checklist helps assess candidates' cross-border practice capabilities, identify which markets they can serve, and document compliance requirements for different jurisdiction pairs.
                 </div>
@@ -419,7 +419,7 @@
                         Export Assessment Report
                     </button>
                     <button class="ai-btn" style="width: 100%; margin-top: 1rem;" onclick="generateAISummary()">
-                        ✨ Generate AI Summary & Risks
+                        Generate AI Summary & Risks
                     </button>
                 </div>
 
@@ -464,7 +464,7 @@
                                 <div class="step-number">2</div>
                                 International Practice Authorization
                             </div>
-                            <button class="ai-btn" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="generateInterviewQuestions(this)">✨ Suggest Questions</button>
+                            <button class="ai-btn" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="generateInterviewQuestions(this)">Suggest Questions</button>
                         </h3>
                         <div class="checklist-items">
                             <label class="checklist-item">
@@ -554,7 +554,7 @@
                                 <div class="step-number">5</div>
                                 Cultural & Language Competency
                             </div>
-                             <button class="ai-btn" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="generateInterviewQuestions(this)">✨ Suggest Questions</button>
+                             <button class="ai-btn" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="generateInterviewQuestions(this)">Suggest Questions</button>
                         </h3>
                         <div class="checklist-items">
                             <label class="checklist-item">
@@ -770,7 +770,7 @@
             const candidateNameInput = document.getElementById('candidateNameInput');
             const candidateName = candidateNameInput.value.trim() || 'the candidate';
 
-            openModal(`✨ AI Summary for ${candidateName}`, '<div class="loading-spinner"></div>');
+            openModal(`AI Summary for ${candidateName}`, '<div class="loading-spinner"></div>');
             
             let checklistData = "Assessment Data:\n";
             document.querySelectorAll('.glass-card:not(.progress-sidebar)').forEach(sectionCard => {
@@ -809,7 +809,7 @@
             const sectionCard = button.closest('.glass-card');
             const title = sectionCard.querySelector('h3').textContent.trim().replace(/^\d+\s*/, '');
             
-            openModal(`✨ Suggested Questions for ${title}`, '<div class="loading-spinner"></div>');
+            openModal(`Suggested Questions for ${title}`, '<div class="loading-spinner"></div>');
 
             let sectionItems = '';
             sectionCard.querySelectorAll('.checklist-item span').forEach(span => {
